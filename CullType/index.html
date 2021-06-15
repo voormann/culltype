@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CullType</title>
+        <meta name="description" content="Multi-language minimalist typing test">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="container">
+            <div id="words">
+                <span id="current"> </span>
+                <span id="next"> </span>
+            </div>
+            <input type="text" id="entry" placeholder="Begin by typing the first word" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
+            <span id="reset" title="[TAB]">⟲</span>
+            <span id="tid">01:00</span>
+            <h4 id="JLD_taal">Language</h4>
+            <button id="en">English</button>
+            <button id="no">Norsk</button>
+            <button id="nl">Nederlands</button>
+            <button id="de">Deutsch</button>
+            <div id="stats">
+                <div>
+                    <h4 id="JLD_opm">Words per minute</h4>
+                    <div id="opm">0</div>
+                </div>
+                <div>
+                    <h4 id="JLD_acc">Accuracy</h4>
+                    <div id="acc">0</div>
+                </div>
+                <div>
+                    <h4 id="JLD_trykk">Keystrokes</h4>
+                    <div id="trykk">0</div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="main.js"></script>
+    </body>
+</html>

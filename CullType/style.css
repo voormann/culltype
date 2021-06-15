@@ -1,0 +1,105 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    color: #113654;
+    background-color: #ffffff;
+    user-select: none;
+    margin: 0;
+}
+
+#words {
+    font-family: 'Roboto Slab', serif;
+    width: 750px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+#words::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+}
+
+#current {
+    font-weight: bold;
+}
+
+.bad {
+    color: #e74c3c;
+}
+
+input {
+    font-family: 'Roboto Slab', serif;
+    margin-bottom: 20px;
+    color: #113654;
+    border-color: #113654;
+    border-style: none none dotted none;
+    padding-left: 0;
+    font-size: 30px;
+    width: 600px;
+    font-weight: bold;
+}
+
+input:focus {
+    border-style: none none solid none;
+    outline: none;
+}
+
+input::placeholder {
+  color: #A7AEB4;
+}
+
+input:focus::placeholder {
+    color: #ffffff;
+}
+
+#container{
+    width: 750px;
+    margin: 150px auto 0;
+}
+
+#stats {
+    display: flex;
+    justify-content: space-around;
+    visibility: hidden;
+    margin-top: 20px;
+    text-align: center;
+}
+
+h4 {
+    margin: 0;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+
+button {
+    border: dotted 2px #113654;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 30px;
+    margin: 5px 5px 0 0;
+    color: #113654;
+}
+
+button:hover {
+    border: solid 2px black;
+}
+
+.suspended {
+    color: #f1c40f;
+}
+
+#reset {
+    cursor: pointer;
+    float: right;
+    margin: 5px;
+}
+
+#tid {
+    float: right;
+    margin: 5px;
+}
