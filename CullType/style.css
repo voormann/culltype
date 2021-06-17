@@ -86,7 +86,7 @@ button {
 }
 
 button:hover {
-    border: solid 2px black;
+    border: solid 2px #113654;
 }
 
 .suspended {
