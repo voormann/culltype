@@ -29,7 +29,7 @@ body {
 }
 
 .bad {
-    color: #e74c3c;
+    color: #ff3b30;
 }
 
 input {
@@ -50,7 +50,7 @@ input:focus {
 }
 
 input::placeholder {
-  color: #A7AEB4;
+  color: #8e8e93;
 }
 
 input:focus::placeholder {
@@ -90,7 +90,7 @@ button:hover {
 }
 
 .suspended {
-    color: #f1c40f;
+    color: #ffcc00;
 }
 
 #reset {

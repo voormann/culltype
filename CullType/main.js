@@ -9,7 +9,6 @@ let trykk = 0;
 let seconds = 0;
 let timer = false;
 let suspended = false;
-let miss = false;
 let focusMsg = "Click to focus";
 let placeMsg = "Begin by typing the first word";
 
@@ -22,12 +21,65 @@ function stokk(a) {
     return a;
 }
 
+function restart() {
+    clearInterval(timer);
+    timer = false;
+    seconds = 60;
+    ordet = 0;
+    poeng = 0;
+    trykk = 0;
+
+    document.getElementById('entry').value = "";
+    document.getElementById('tid').firstChild.data = "01:00";
+    document.getElementById('entry').placeholder = placeMsg;
+    document.getElementById('current').className = '';
+
+    stokk(liste);
+    document.getElementById('current').firstChild.data = liste[0];
+    document.getElementById('next').firstChild.data = liste.slice(1, 25).join(" ");
+}
+
+function removeSuspension() {
+    document.getElementById('entry').className = '';
+    document.getElementById('entry').value = "";
+    suspended = false;
+}
+
+function tick() {
+    seconds--;
+
+    if (seconds <= 0) {
+        suspended = true;
+        document.getElementById('entry').className = 'suspended';
+        window.setTimeout(removeSuspension, 2000);
+
+        document.getElementById('opm').firstChild.data = Math.round(poeng / 5);
+        document.getElementById('acc').firstChild.data = Number(((poeng / trykk) * 100).toFixed(2)) + "%";
+        document.getElementById('trykk').firstChild.data = trykk;
+        document.getElementById('stats').style.visibility = 'visible';
+
+        restart();
+        return;
+    }
+
+    document.getElementById('tid').firstChild.data = "00:" + (seconds < 10 ? "0" + seconds : seconds);
+}
+
 function storForbokstav(ord) {
     return ord[0] !== ord[0].toLowerCase();
 }
 
 document.getElementById('entry').addEventListener('keydown', event => {
-    if (suspended || event.repeat)
+    if (suspended)
+        return;
+    
+    if (event.key.length === 1) {
+        document.getElementById('current').className = liste[ordet].startsWith(event.target.value + event.key) ? '' : 'bad';
+    } else if (event.key === 'Backspace') {
+        document.getElementById('current').className = event.ctrlKey || liste[ordet].startsWith(event.target.value.slice(0, -1)) ? '' : 'bad';
+    }
+
+    if (event.repeat)
         return;
 
     if (!timer) {
@@ -51,29 +103,14 @@ document.getElementById('entry').addEventListener('keydown', event => {
 
         ordet++;
 
-        miss = false;
         document.getElementById('current').className = '';
         document.getElementById('current').firstChild.data = liste[ordet];
         document.getElementById('next').firstChild.data = liste.slice(ordet + 1, ordet + 25).join(" ");
         document.getElementById('entry').value = "";
         event.preventDefault();
     } else if (event.key === 'Tab') {
-    	restart();
+        restart();
         event.preventDefault();
-    }
-});
-
-document.getElementById('entry').addEventListener('input', event => {
-    if (liste[ordet].indexOf(event.target.value) === 0) {
-        if (miss) {
-            miss = false;
-            document.getElementById('current').className = '';
-        }
-    } else {
-        if (!miss) {
-            miss = true;
-            document.getElementById('current').className = 'bad';
-        }
     }
 });
 
@@ -127,50 +164,6 @@ document.getElementById('container').addEventListener('click', event => {
         document.getElementById('JLD_trykk').firstChild.data = "Tastenanschläge";
     }
 });
-
-function tick() {
-    seconds--;
-
-    if (seconds <= 0) {
-        suspended = true;
-        document.getElementById('entry').className = 'suspended';
-        window.setTimeout(function() {
-            miss = false;
-            document.getElementById('current').className = '';
-            document.getElementById('entry').className = '';
-            document.getElementById('entry').value = "";
-            suspended = false;
-        }, 2000);
-
-        document.getElementById('opm').firstChild.data = Math.round(poeng / 5);
-        document.getElementById('acc').firstChild.data = Number(((poeng / trykk) * 100).toFixed(2)) + "%";
-        document.getElementById('trykk').firstChild.data = trykk;
-        document.getElementById('stats').style.visibility = 'visible';
-        restart();
-        return;
-    }
-
-    document.getElementById('tid').firstChild.data = "00:" + (seconds < 10 ? "0" + seconds : seconds);
-}
-
-function restart() {
-    clearInterval(timer);
-    timer = false;
-    seconds = 60;
-    ordet = 0;
-    poeng = 0;
-    trykk = 0;
-    miss = false;
-
-    document.getElementById('entry').value = "";
-    document.getElementById('tid').firstChild.data = "01:00";
-    document.getElementById('entry').placeholder = placeMsg;
-    document.getElementById('current').className = '';
-
-    stokk(liste);
-    document.getElementById('current').firstChild.data = liste[0];
-    document.getElementById('next').firstChild.data = liste.slice(1, 25).join(" ");
-}
 
 (function () {
     liste = english;
