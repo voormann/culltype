@@ -28,14 +28,11 @@ body {
     font-weight: bold;
 }
 
-.bad {
-    color: #ff3b30;
-}
-
 input {
     font-family: 'Roboto Slab', serif;
     margin-bottom: 20px;
     color: #113654;
+    background-color: #ffffff;
     border-color: #113654;
     border-style: none none dotted none;
     padding-left: 0;
@@ -50,7 +47,7 @@ input:focus {
 }
 
 input::placeholder {
-  color: #8e8e93;
+    color: #8e8e93;
 }
 
 input:focus::placeholder {
@@ -78,7 +75,7 @@ h4 {
 
 button {
     border: dotted 2px #113654;
-    background-color: #fff;
+    background-color: #ffffff;
     cursor: pointer;
     font-size: 30px;
     margin: 5px 5px 0 0;
@@ -87,6 +84,10 @@ button {
 
 button:hover {
     border: solid 2px #113654;
+}
+
+.bad {
+    color: #ff3b30;
 }
 
 .suspended {
@@ -102,4 +103,39 @@ button:hover {
 #tid {
     float: right;
     margin: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        color: #c0dcf4;
+        background-color: #181818;
+    }
+
+    #words::after {
+        background: linear-gradient(to right, rgba(24, 24, 24, 0), rgba(24, 24, 24, 1));
+    }
+
+    input {
+        color: #c0dcf4;
+        background-color: #181818;
+        border-color: #c0dcf4;
+    }
+
+    input::placeholder {
+        color: #69696f;
+    }
+
+    input:focus::placeholder {
+        color: #181818;
+    }
+
+    button {
+        border: dotted 2px #c0dcf4;
+        background-color: #181818;
+        color: #c0dcf4;
+    }
+
+    button:hover {
+        border: solid 2px #c0dcf4;
+    }
 }
