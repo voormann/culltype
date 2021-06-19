@@ -1,8 +1,14 @@
+:root {
+    --color: #113654;
+    --aux-color: #8e8e93;
+    --bg-color: #ffffff;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     font-size: 30px;
-    color: #113654;
-    background-color: #ffffff;
+    color: var(--color);
+    background-color: var(--bg-color);
     user-select: none;
     margin: 0;
 }
@@ -16,7 +22,7 @@ body {
 }
 
 #words::after {
-    content: '';
+    content: "";
     position: absolute;
     right: 0;
     width: 40px;
@@ -31,9 +37,9 @@ body {
 input {
     font-family: 'Roboto Slab', serif;
     margin-bottom: 20px;
-    color: #113654;
-    background-color: #ffffff;
-    border-color: #113654;
+    color: var(--color);
+    background-color: var(--bg-color);
+    border-color: var(--color);
     border-style: none none dotted none;
     padding-left: 0;
     font-size: 30px;
@@ -47,14 +53,14 @@ input:focus {
 }
 
 input::placeholder {
-    color: #8e8e93;
+    color: var(--aux-color);
 }
 
 input:focus::placeholder {
-    color: #ffffff;
+    color: var(--bg-color);
 }
 
-#container{
+#container {
     width: 750px;
     margin: 150px auto 0;
 }
@@ -74,16 +80,47 @@ h4 {
 }
 
 button {
-    border: dotted 2px #113654;
-    background-color: #ffffff;
-    cursor: pointer;
-    font-size: 30px;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    height: 45px;
+    width: 150px;
     margin: 5px 5px 0 0;
-    color: #113654;
+    padding: 5px 5px;
+    font-weight: bold;
+    font-size: 17px;
+    letter-spacing: 2px;
+    color: var(--color);
+    border: 2px var(--color) solid;
+    background-color: var(--bg-color);
+    text-transform: uppercase;
+    outline: 0;
+    z-index: 1;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 button:hover {
-    border: solid 2px #113654;
+    color: var(--bg-color);
+}
+
+button::before {
+    content: "";
+    position: absolute;
+    background: var(--color);
+    bottom: 0;
+    left: 0;
+    right: 100%;
+    top: 0;
+    z-index: -1;
+    transition: right 0.2s;
+}
+
+button:hover::before {
+    right: 0;
+}
+
+button:active {
+    transform: scale(0.9);
 }
 
 .bad {
@@ -94,48 +131,40 @@ button:hover {
     color: #ffcc00;
 }
 
-#reset {
-    cursor: pointer;
+#hud {
     float: right;
+    width: 120px;
     margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
-#tid {
-    float: right;
-    margin: 5px;
+#reset {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#reset:hover {
+    transform: rotate(-180deg);
+}
+
+#reset:active {
+    transform: rotate(-180deg) scale(0.9);
+}
+
+.arrow {
+    fill: var(--color);
 }
 
 @media (prefers-color-scheme: dark) {
-    body {
-        color: #c0dcf4;
-        background-color: #181818;
+    :root {
+        --color: #c0dcf4;
+        --aux-color: #69696f;
+        --bg-color: #181818;
     }
 
     #words::after {
         background: linear-gradient(to right, rgba(24, 24, 24, 0), rgba(24, 24, 24, 1));
-    }
-
-    input {
-        color: #c0dcf4;
-        background-color: #181818;
-        border-color: #c0dcf4;
-    }
-
-    input::placeholder {
-        color: #69696f;
-    }
-
-    input:focus::placeholder {
-        color: #181818;
-    }
-
-    button {
-        border: dotted 2px #c0dcf4;
-        background-color: #181818;
-        color: #c0dcf4;
-    }
-
-    button:hover {
-        border: solid 2px #c0dcf4;
     }
 }

@@ -96,9 +96,8 @@ document.getElementById('entry').addEventListener('keydown', event => {
         if (liste[ordet] === event.target.value) {
             poeng += liste[ordet].length;
 
-            if (storForbokstav(liste[ordet])) {
+            if (storForbokstav(liste[ordet]))
                 poeng++;
-            }
         }
 
         ordet++;
