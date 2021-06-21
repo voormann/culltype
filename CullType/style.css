@@ -1,3 +1,35 @@
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('roboto300.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto Slab';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('robotoslab.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('roboto500.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto Slab';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('robotoslab.woff2') format('woff2');
+}
+
 :root {
     --color: #113654;
     --aux-color: #8e8e93;
@@ -6,6 +38,7 @@
 
 body {
     font-family: 'Roboto', sans-serif;
+    font-weight: 300;
     font-size: 30px;
     color: var(--color);
     background-color: var(--bg-color);
@@ -31,11 +64,12 @@ body {
 }
 
 #current {
-    font-weight: bold;
+    font-weight: 400;
 }
 
 input {
     font-family: 'Roboto Slab', serif;
+    font-weight: 400;
     margin-bottom: 20px;
     color: var(--color);
     background-color: var(--bg-color);
@@ -44,7 +78,6 @@ input {
     padding-left: 0;
     font-size: 30px;
     width: 600px;
-    font-weight: bold;
 }
 
 input:focus {
@@ -77,16 +110,17 @@ h4 {
     margin: 0;
     font-size: 20px;
     text-transform: uppercase;
+    font-weight: 500;
 }
 
 button {
     font-family: 'Roboto', sans-serif;
+    font-weight: 500;
     position: relative;
     height: 45px;
     width: 150px;
     margin: 5px 5px 0 0;
     padding: 5px 5px;
-    font-weight: bold;
     font-size: 17px;
     letter-spacing: 2px;
     color: var(--color);
@@ -96,7 +130,7 @@ button {
     outline: 0;
     z-index: 1;
     cursor: pointer;
-    transition: 0.2s;
+    transition: color 0.2s linear, transform 0.2s linear;
 }
 
 button:hover {
@@ -106,17 +140,19 @@ button:hover {
 button::before {
     content: "";
     position: absolute;
-    background: var(--color);
-    bottom: 0;
-    left: 0;
-    right: 100%;
-    top: 0;
+    background-color: var(--color);
+    bottom: -1px;
+    left: -1px;
+    right: -1px;
+    top: -1px;
     z-index: -1;
-    transition: right 0.2s;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.2s linear;
 }
 
 button:hover::before {
-    right: 0;
+    transform: scaleX(1);
 }
 
 button:active {
@@ -153,7 +189,7 @@ button:active {
     transform: rotate(-180deg) scale(0.9);
 }
 
-.arrow {
+#arrow {
     fill: var(--color);
 }
 
