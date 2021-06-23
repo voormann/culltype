@@ -23,6 +23,8 @@ function stokk(a) {
 
 function restart() {
     clearInterval(timer);
+    stokk(liste);
+
     timer = false;
     seconds = 60;
     ordet = 0;
@@ -33,16 +35,15 @@ function restart() {
     document.getElementById('tid').firstChild.data = "01:00";
     document.getElementById('entry').placeholder = placeMsg;
     document.getElementById('current').className = '';
-
-    stokk(liste);
     document.getElementById('current').firstChild.data = liste[0];
     document.getElementById('next').firstChild.data = liste.slice(1, 25).join(" ");
 }
 
 function removeSuspension() {
+    suspended = false;
+    document.getElementById('current').className = '';
     document.getElementById('entry').className = '';
     document.getElementById('entry').value = "";
-    suspended = false;
 }
 
 function tick() {
@@ -53,8 +54,8 @@ function tick() {
         document.getElementById('entry').className = 'suspended';
         window.setTimeout(removeSuspension, 2000);
 
-        document.getElementById('opm').firstChild.data = Math.round(poeng / 5);
-        document.getElementById('acc').firstChild.data = Number(((poeng / trykk) * 100).toFixed(2)) + "%";
+        document.getElementById('opm').firstChild.data = Math.round((poeng + ordet) / 5);
+        document.getElementById('acc').firstChild.data = Number((((poeng + ordet) / trykk) * 100).toFixed(2)) + "%";
         document.getElementById('trykk').firstChild.data = trykk;
         document.getElementById('stats').style.visibility = 'visible';
 
@@ -70,20 +71,11 @@ function storForbokstav(ord) {
 }
 
 document.getElementById('entry').addEventListener('keydown', event => {
-    if (suspended)
-        return;
-    
-    if (event.key.length === 1) {
-        document.getElementById('current').className = liste[ordet].startsWith(event.target.value + event.key) ? '' : 'bad';
-    } else if (event.key === 'Backspace') {
-        document.getElementById('current').className = (event.ctrlKey || event.metaKey) || liste[ordet].startsWith(event.target.value.slice(0, -1)) ? '' : 'bad';
-    }
-
-    if (event.repeat)
+    if (suspended || event.repeat)
         return;
 
     if (!timer) {
-        document.getElementById('entry').placeholder = focusMsg;
+        event.target.placeholder = focusMsg;
         
         timer = window.setInterval(tick, 1000);
     }
@@ -91,8 +83,6 @@ document.getElementById('entry').addEventListener('keydown', event => {
     trykk++;
 
     if (event.key === ' ') {
-        poeng++;
-        
         if (liste[ordet] === event.target.value) {
             poeng += liste[ordet].length;
 
@@ -105,11 +95,23 @@ document.getElementById('entry').addEventListener('keydown', event => {
         document.getElementById('current').className = '';
         document.getElementById('current').firstChild.data = liste[ordet];
         document.getElementById('next').firstChild.data = liste.slice(ordet + 1, ordet + 25).join(" ");
-        document.getElementById('entry').value = "";
+        event.target.value = "";
         event.preventDefault();
     } else if (event.key === 'Tab') {
         restart();
         event.preventDefault();
+    }
+});
+
+document.getElementById('entry').addEventListener('input', event => {
+    const el = document.getElementById('current');
+
+    if (liste[ordet].startsWith(event.target.value)) {
+        if (el.className !== '')
+            el.className = '';
+    } else {
+        if (el.className === '')
+            el.className = 'bad';
     }
 });
 

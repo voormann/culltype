@@ -31,17 +31,17 @@
 }
 
 :root {
-    --color: #113654;
-    --aux-color: #8e8e93;
-    --bg-color: #ffffff;
+    --prime: #113654;
+    --aux: #8e8e93;
+    --bg: #ffffff;
 }
 
 body {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     font-size: 30px;
-    color: var(--color);
-    background-color: var(--bg-color);
+    color: var(--prime);
+    background-color: var(--bg);
     user-select: none;
     margin: 0;
 }
@@ -71,26 +71,26 @@ input {
     font-family: 'Roboto Slab', serif;
     font-weight: 400;
     margin-bottom: 20px;
-    color: var(--color);
-    background-color: var(--bg-color);
-    border-color: var(--color);
-    border-style: none none dotted none;
+    color: var(--prime);
+    background-color: var(--bg);
+    border-color: var(--prime);
+    border-style: none none dotted;
     padding-left: 0;
     font-size: 30px;
     width: 600px;
 }
 
 input:focus {
-    border-style: none none solid none;
+    border-style: none none solid;
     outline: none;
 }
 
 input::placeholder {
-    color: var(--aux-color);
+    color: var(--aux);
 }
 
 input:focus::placeholder {
-    color: var(--bg-color);
+    color: var(--bg);
 }
 
 #container {
@@ -116,31 +116,36 @@ h4 {
 button {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
-    position: relative;
     height: 45px;
     width: 150px;
     margin: 5px 5px 0 0;
-    padding: 5px 5px;
+    padding: 5px;
     font-size: 17px;
     letter-spacing: 2px;
-    color: var(--color);
-    border: 2px var(--color) solid;
-    background-color: var(--bg-color);
+    color: var(--prime);
+    border: 2px var(--prime) solid;
+    background-color: var(--bg);
     text-transform: uppercase;
     outline: 0;
     z-index: 1;
     cursor: pointer;
-    transition: color 0.2s linear, transform 0.2s linear;
+    transition: color 200ms ease, transform 200ms ease;
 }
 
 button:hover {
-    color: var(--bg-color);
+    color: var(--bg);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+    transition: transform 32ms ease;
 }
 
 button::before {
     content: "";
     position: absolute;
-    background-color: var(--color);
+    background-color: var(--prime);
     bottom: -1px;
     left: -1px;
     right: -1px;
@@ -148,15 +153,11 @@ button::before {
     z-index: -1;
     transform: scaleX(0);
     transform-origin: 0 50%;
-    transition: transform 0.2s linear;
+    transition: transform 200ms ease;
 }
 
 button:hover::before {
     transform: scaleX(1);
-}
-
-button:active {
-    transform: scale(0.9);
 }
 
 .bad {
@@ -178,26 +179,28 @@ button:active {
 
 #reset {
     cursor: pointer;
-    transition: transform 0.2s;
+    z-index: 2;
+    transition: transform 200ms ease;
 }
 
 #reset:hover {
-    transform: rotate(-180deg);
+    transform: rotate(-180deg) scale(1.05);
 }
 
 #reset:active {
-    transform: rotate(-180deg) scale(0.9);
+    transform: rotate(-180deg) scale(0.95);
+    transition: transform 32ms ease;
 }
 
 #arrow {
-    fill: var(--color);
+    fill: var(--prime);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color: #c0dcf4;
-        --aux-color: #69696f;
-        --bg-color: #181818;
+        --prime: #c0dcf4;
+        --aux: #69696f;
+        --bg: #181818;
     }
 
     #words::after {
