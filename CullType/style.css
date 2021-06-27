@@ -70,7 +70,6 @@ body {
 input {
     font-family: 'Roboto Slab', serif;
     font-weight: 400;
-    margin-bottom: 20px;
     color: var(--prime);
     background-color: var(--bg);
     border-color: var(--prime);
@@ -78,11 +77,11 @@ input {
     padding-left: 0;
     font-size: 30px;
     width: 600px;
+    outline: 0;
 }
 
 input:focus {
     border-style: none none solid;
-    outline: none;
 }
 
 input::placeholder {
@@ -93,21 +92,13 @@ input:focus::placeholder {
     color: var(--bg);
 }
 
-#container {
+section {
     width: 750px;
     margin: 150px auto 0;
 }
 
-#stats {
-    display: flex;
-    justify-content: space-around;
-    visibility: hidden;
-    margin-top: 20px;
-    text-align: center;
-}
-
 h4 {
-    margin: 0;
+    margin: 20px 0 0;
     font-size: 20px;
     text-transform: uppercase;
     font-weight: 500;
@@ -116,6 +107,7 @@ h4 {
 button {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
+    position: relative;
     height: 45px;
     width: 150px;
     margin: 5px 5px 0 0;
@@ -127,37 +119,28 @@ button {
     background-color: var(--bg);
     text-transform: uppercase;
     outline: 0;
-    z-index: 1;
     cursor: pointer;
-    transition: color 200ms ease, transform 200ms ease;
-}
-
-button:hover {
-    color: var(--bg);
-    transform: scale(1.05);
-}
-
-button:active {
-    transform: scale(0.95);
-    transition: transform 32ms ease;
 }
 
 button::before {
-    content: "";
+    content: attr(data-txt);
     position: absolute;
-    background-color: var(--prime);
-    bottom: -1px;
-    left: -1px;
-    right: -1px;
-    top: -1px;
-    z-index: -1;
-    transform: scaleX(0);
-    transform-origin: 0 50%;
-    transition: transform 200ms ease;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--prime);
+    color: var(--bg);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 200ms ease;
 }
 
 button:hover::before {
-    transform: scaleX(1);
+    opacity: 1;
 }
 
 .bad {
@@ -169,12 +152,9 @@ button:hover::before {
 }
 
 #hud {
-    float: right;
-    width: 120px;
-    margin: 5px;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 #reset {
@@ -194,6 +174,110 @@ button:hover::before {
 
 #arrow {
     fill: var(--prime);
+}
+
+#languages {
+    display: flex;
+    justify-content: space-between;
+}
+
+#stats {
+    display: flex;
+    justify-content: space-around;
+    visibility: hidden;
+    text-align: center;
+}
+
+#dialog {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 18;
+    animation: dialogopen 300ms ease;
+}
+
+@keyframes dialogopen {
+    from {
+        opacity: 0;
+        transform: scale3d(1.1, 1.1, 1);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+#dialog-content {
+    position: absolute;
+    top: 150px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    max-width: 750px;
+    background-color: var(--bg);
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 100;
+}
+
+#dialog-content > button {
+    float: right;
+    margin: 0 0 0 5px;
+}
+
+textarea {
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    font-size: 18px;
+    box-sizing: border-box;
+    height: 300px;
+    resize: vertical;
+    outline: 0;
+    border: 2px var(--prime) solid;
+    color: var(--color);
+    background-color: var(--bg);
+}
+
+textarea::placeholder {
+    color: var(--aux);
+}
+
+#error {
+    color: #ff3b30;
+    float: left;
+    font-size: 18px;
+    font-weight: 500;
+    animation: shake 500ms linear;
+}
+
+@keyframes shake {
+    8%, 41% {
+        transform: translateX(-10px);
+    }
+
+    25%, 58% {
+        transform: translateX(10px);
+    }
+
+    75% {
+        transform: translateX(-5px);
+    }
+
+    92% {
+        transform: translateX(5px);
+    }
+
+    0%, 100% {
+        transform: translateX(0);
+    }
+}
+
+.hidden {
+    display: none;
 }
 
 @media (prefers-color-scheme: dark) {

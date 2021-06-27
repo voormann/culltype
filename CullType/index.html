@@ -8,24 +8,27 @@
         <link href="style.css" rel="stylesheet">
     </head>
     <body>
-        <div id="container">
+        <section>
             <div id="words">
-                <span id="current"> </span>
-                <span id="next"> </span>
+                <span id="current">The</span>
+                <span id="next">quick brown fox jumps over the lazy dog</span>
             </div>
-            <input type="text" id="entry" placeholder="Begin by typing the first word" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
             <div id="hud">
+                <input type="text" id="entry" placeholder="Begin by typing the first word" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
                 <span id="tid">01:00</span>
                 <svg id="reset" width="32" height="32" viewBox="0 0 612 612" xmlns="http://www.w3.org/2000/svg">
                     <title>[TAB]</title>
-                    <path id="arrow" d="M592.875 382.5h-191.25c-10.557 0-19.125 8.568-19.125 19.125s8.568 19.125 19.125 19.125h146.02c-43.013 90.365-134.889 153-241.645 153-134.851 0-246.101-99.794-264.709-229.5H2.639C21.497 495.146 149.978 612 306 612c115.285 0 215.577-63.801 267.75-157.973v138.848c0 10.557 8.568 19.125 19.125 19.125S612 603.432 612 592.875v-191.25c0-20.311-19.125-19.125-19.125-19.125zm-573.75-153h191.25c10.557 0 19.125-8.568 19.125-19.125s-8.568-19.125-19.125-19.125H64.241c42.974-90.423 134.984-153 241.759-153 134.851 0 246.101 99.794 264.709 229.5h38.651C590.504 116.834 462.021 0 306 0 190.714 0 90.423 63.801 38.25 157.973V19.125C38.25 8.568 29.682 0 19.125 0S0 8.568 0 19.125v191.25C0 228.907 19.125 229.5 19.125 229.5z"/>
+                    <path id="arrow" d="M593 383H402c-11 0-11 38 0 38h146a268 268 0 01-507-77H3a306 306 0 00571 110v139c0 10 38 10 38 0V402c0-21-19-19-19-19zM19 230h191c11 0 11-39 0-39H64a268 268 0 01507 77h38A306 306 0 0038 158V19C38 9 0 9 0 19v191c0 19 19 20 19 20z"/>
                 </svg>
             </div>
-            <h4 id="JLD_taal">Language</h4>
-            <button id="en">English</button>
-            <button id="no">Norsk</button>
-            <button id="nl">Nederlands</button>
-            <button id="de">Deutsch</button>
+            <h4 id="JLD_taal">Glossary</h4>
+            <div id="languages">
+                <button id="en" data-txt="English">English</button>
+                <button id="no" data-txt="Norsk">Norsk</button>
+                <button id="nl" data-txt="Nederlands">Nederlands</button>
+                <button id="de" data-txt="Deutsch">Deutsch</button>
+                <button id="open" data-txt="Customize">Customize</button>
+            </div>
             <div id="stats">
                 <div>
                     <h4 id="JLD_opm">Words per minute</h4>
@@ -40,7 +43,16 @@
                     <div id="trykk">0</div>
                 </div>
             </div>
-        </div>
-        <script type="text/javascript" src="main.js"></script>
+        </section>
+        <aside id="dialog" class="hidden">
+            <div id="dialog-content">
+                <textarea class="textarea" id="customlist" placeholder="Add words, separated by spaces, commas, semicolons, or lines. Put a hyphen (-) at the beginning to turn shuffle off. Note: This mode ignores commas and semicolons." spellcheck="false"></textarea>
+                <div id="error" class="hidden">The list must contain at least one word</div>
+                <button id="apply" data-txt="Apply">Apply</button>
+                <button id="cancel" data-txt="Cancel">Cancel</button>
+            </div>
+        </aside>
+        <script src="locale.js"></script>
+        <script src="main.js"></script>
     </body>
 </html>
