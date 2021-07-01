@@ -16,40 +16,40 @@
             <div id="hud">
                 <input type="text" id="entry" placeholder="Begin by typing the first word" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
                 <span id="tid">01:00</span>
-                <svg id="reset" width="32" height="32" viewBox="0 0 612 612" xmlns="http://www.w3.org/2000/svg">
+                <svg id="reset" width="32" height="32" viewBox="0 0 612 612">
                     <title>[TAB]</title>
                     <path id="arrow" d="M593 383H402c-11 0-11 38 0 38h146a268 268 0 01-507-77H3a306 306 0 00571 110v139c0 10 38 10 38 0V402c0-21-19-19-19-19zM19 230h191c11 0 11-39 0-39H64a268 268 0 01507 77h38A306 306 0 0038 158V19C38 9 0 9 0 19v191c0 19 19 20 19 20z"/>
                 </svg>
             </div>
-            <h4 id="JLD_taal">Glossary</h4>
+            <h4 id="lang">Glossary</h4>
             <div id="languages">
-                <button id="en" data-txt="English">English</button>
-                <button id="no" data-txt="Norsk">Norsk</button>
-                <button id="nl" data-txt="Nederlands">Nederlands</button>
-                <button id="de" data-txt="Deutsch">Deutsch</button>
-                <button id="open" data-txt="Customize">Customize</button>
+                <button id="en">English</button>
+                <button id="no">Norsk</button>
+                <button id="nl">Nederlands</button>
+                <button id="de">Deutsch</button>
+                <button id="custom">Customize</button>
             </div>
             <div id="stats">
                 <div>
-                    <h4 id="JLD_opm">Words per minute</h4>
+                    <h4 id="wpm">Words per minute</h4>
                     <div id="opm">0</div>
                 </div>
                 <div>
-                    <h4 id="JLD_acc">Accuracy</h4>
-                    <div id="acc">0</div>
+                    <h4 id="acc">Accuracy</h4>
+                    <div id="noy">0</div>
                 </div>
                 <div>
-                    <h4 id="JLD_trykk">Keystrokes</h4>
+                    <h4 id="key">Keystrokes</h4>
                     <div id="trykk">0</div>
                 </div>
             </div>
         </section>
         <aside id="dialog" class="hidden">
             <div id="dialog-content">
-                <textarea class="textarea" id="customlist" placeholder="Add words, separated by spaces, commas, semicolons, or lines. Put a hyphen (-) at the beginning to turn shuffle off. Note: This mode ignores commas and semicolons." spellcheck="false"></textarea>
-                <div id="error" class="hidden">The list must contain at least one word</div>
-                <button id="apply" data-txt="Apply">Apply</button>
-                <button id="cancel" data-txt="Cancel">Cancel</button>
+                <textarea class="textarea" id="customlist" placeholder="Add words, separated by spaces, commas, semicolons, or lines... &#10;&#10;Put a hyphen (-) at the beginning to turn shuffle off. Note: This mode ignores commas and semicolons." spellcheck="false"></textarea>
+                <div id="warn" class="hidden">The list must contain at least one word</div>
+                <button id="apply">Apply</button>
+                <button id="cancel">Cancel</button>
             </div>
         </aside>
         <script src="locale.js"></script>

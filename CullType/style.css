@@ -34,6 +34,9 @@
     --prime: #113654;
     --aux: #8e8e93;
     --bg: #ffffff;
+    --shade: #cfd7dd;
+    --red: #ff3b30;
+    --yellow: #ffcc00;
 }
 
 body {
@@ -72,8 +75,9 @@ input {
     font-weight: 400;
     color: var(--prime);
     background-color: var(--bg);
-    border-color: var(--prime);
+    border-width: 2px;
     border-style: none none dotted;
+    border-color: var(--prime);
     padding-left: 0;
     font-size: 30px;
     width: 600px;
@@ -107,48 +111,32 @@ h4 {
 button {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
-    position: relative;
     height: 45px;
     width: 150px;
-    margin: 5px 5px 0 0;
     padding: 5px;
     font-size: 17px;
     letter-spacing: 2px;
     color: var(--prime);
-    border: 2px var(--prime) solid;
-    background-color: var(--bg);
+    background-color: var(--shade);
+    border: 0;
+    border-radius: 4px;
     text-transform: uppercase;
     outline: 0;
     cursor: pointer;
+    transition: color 200ms ease, background-color 200ms ease;
 }
 
-button::before {
-    content: attr(data-txt);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: var(--prime);
+button:hover {
     color: var(--bg);
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 200ms ease;
-}
-
-button:hover::before {
-    opacity: 1;
+    background-color: var(--prime);
 }
 
 .bad {
-    color: #ff3b30;
+    color: var(--red);
 }
 
 .suspended {
-    color: #ffcc00;
+    color: var(--yellow);
 }
 
 #hud {
@@ -179,11 +167,13 @@ button:hover::before {
 #languages {
     display: flex;
     justify-content: space-between;
+    gap: 5px;
+    margin-top: 5px;
 }
 
 #stats {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     visibility: hidden;
     text-align: center;
 }
@@ -194,7 +184,7 @@ button:hover::before {
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6);
     z-index: 18;
     animation: dialogopen 300ms ease;
 }
@@ -220,13 +210,14 @@ button:hover::before {
     max-width: 750px;
     background-color: var(--bg);
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 6px;
     z-index: 100;
+    box-shadow: 0 10px 20px rgb(0 0 0 / 10%), 0 6px 6px rgb(0 0 0 / 16%);
 }
 
 #dialog-content > button {
     float: right;
-    margin: 0 0 0 5px;
+    margin-left: 5px;
 }
 
 textarea {
@@ -237,24 +228,31 @@ textarea {
     height: 300px;
     resize: vertical;
     outline: 0;
-    border: 2px var(--prime) solid;
+    border: 2px var(--shade) solid;
+    border-radius: 4px;
     color: var(--color);
     background-color: var(--bg);
+    display: block;
+    margin-bottom: 8px;
 }
 
 textarea::placeholder {
     color: var(--aux);
 }
 
-#error {
-    color: #ff3b30;
+textarea:focus {
+    border: 2px var(--prime) solid;
+}
+
+#warn {
+    color: var(--red);
     float: left;
     font-size: 18px;
     font-weight: 500;
-    animation: shake 500ms linear;
+    animation: taylor-swift 500ms linear;
 }
 
-@keyframes shake {
+@keyframes taylor-swift {
     8%, 41% {
         transform: translateX(-10px);
     }
@@ -283,8 +281,11 @@ textarea::placeholder {
 @media (prefers-color-scheme: dark) {
     :root {
         --prime: #c0dcf4;
-        --aux: #69696f;
+        --aux: #8e8e93;
         --bg: #181818;
+        --shade: #20293c;
+        --red: #ff453a;
+        --yellow: #ffd60a;
     }
 
     #words::after {

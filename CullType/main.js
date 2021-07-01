@@ -2,20 +2,20 @@ let liste = [];
 let ordet = 0;
 let poeng = 0;
 let trykk = 0;
-let seconds = 0;
+let seconds = 60;
 let timer = false;
 let suspended = false;
 let randomize = true;
+let miss = false;
 let focusMsg = "Click to focus";
 let placeMsg = "Begin by typing the first word";
 
-function stokk(a) {
-    for (let i = a.length - 1; i > 0; i--) {
+function stokk(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
 
-    return a;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
 }
 
 function restart() {
@@ -24,11 +24,12 @@ function restart() {
     if (randomize)
         stokk(liste);
 
-    timer = false;
-    seconds = 60;
     ordet = 0;
     poeng = 0;
     trykk = 0;
+    seconds = 60;
+    timer = false;
+    miss = false;
 
     document.getElementById('entry').value = "";
     document.getElementById('tid').firstChild.data = "01:00";
@@ -40,6 +41,8 @@ function restart() {
 
 function removeSuspension() {
     suspended = false;
+    miss = false;
+
     document.getElementById('current').className = '';
     document.getElementById('entry').className = '';
     document.getElementById('entry').value = "";
@@ -51,14 +54,15 @@ function tick() {
     if (seconds <= 0) {
         suspended = true;
         document.getElementById('entry').className = 'suspended';
-        window.setTimeout(removeSuspension, 2000);
+        window.setTimeout(removeSuspension, 1500);
 
         document.getElementById('opm').firstChild.data = Math.round((poeng + ordet) / 5);
-        document.getElementById('acc').firstChild.data = Number((((poeng + ordet) / trykk) * 100).toFixed(2)) + "%";
+        document.getElementById('noy').firstChild.data = Number((((poeng + ordet) / trykk) * 100).toFixed(2)) + "%";
         document.getElementById('trykk').firstChild.data = trykk;
         document.getElementById('stats').style.visibility = 'visible';
 
         restart();
+
         return;
     }
 
@@ -74,9 +78,9 @@ document.getElementById('entry').addEventListener('keydown', event => {
         return;
 
     if (!timer) {
-        event.target.placeholder = focusMsg;
-        
         timer = window.setInterval(tick, 1000);
+
+        event.target.placeholder = focusMsg;
     }
 
     trykk++;
@@ -90,27 +94,34 @@ document.getElementById('entry').addEventListener('keydown', event => {
         }
 
         ordet++;
+        miss = false;
 
         document.getElementById('current').className = '';
         document.getElementById('current').firstChild.data = liste[ordet];
         document.getElementById('next').firstChild.data = liste.slice(ordet + 1, ordet + 25).join(" ");
         event.target.value = "";
+
         event.preventDefault();
     } else if (event.key === 'Tab') {
         restart();
+
         event.preventDefault();
     }
 });
 
 document.getElementById('entry').addEventListener('input', event => {
-    const el = document.getElementById('current');
+    if (liste[ordet].indexOf(event.target.value) === 0) {
+        if (miss) {
+            miss = false;
 
-    if (liste[ordet].startsWith(event.target.value)) {
-        if (el.className !== '')
-            el.className = '';
+            document.getElementById('current').className = '';
+        }
     } else {
-        if (el.className === '')
-            el.className = 'bad';
+        if (!miss) {
+            miss = true;
+
+            document.getElementById('current').className = 'bad';
+        }
     }
 });
 
@@ -122,70 +133,66 @@ document.body.addEventListener('click', event => {
     
     if (selected === 'reset') {
         restart();
-    } else if (selected === 'open') {
+    } else if (selected === 'custom') {
         document.getElementById('dialog').className = '';
     } else if (selected === 'apply') {
         customize();
-    } else if (selected === 'cancel') {
+    } else if (selected === 'cancel' || selected === 'dialog') {
         document.getElementById('dialog').className = 'hidden';
-        document.getElementById('error').className = 'hidden';
+        document.getElementById('warn').className = 'hidden';
+        document.getElementById('customlist').removeAttribute('style');
     } else if (['en', 'no', 'nl', 'de'].includes(selected)) {
-        placeMsg = lang[selected].ph_type;
-        focusMsg = lang[selected].ph_focus;
-        liste = lang[selected].words;
+        placeMsg = lang[selected].type;
+        focusMsg = lang[selected].focus;
+        liste = [...lang[selected].entries];
 
-        document.getElementById('JLD_taal').firstChild.data = lang[selected].txt_lang;
-        document.getElementById('customlist').placeholder = lang[selected].ph_info;
-        document.getElementById('error').firstChild.data = lang[selected].txt_warn;
-        document.getElementById('open').firstChild.data = lang[selected].btn_custom;
-        document.getElementById('open').setAttribute('data-txt', lang[selected].btn_custom);
-        document.getElementById('cancel').firstChild.data = lang[selected].btn_cancel;
-        document.getElementById('cancel').setAttribute('data-txt', lang[selected].btn_cancel);
-        document.getElementById('apply').firstChild.data = lang[selected].btn_apply;
-        document.getElementById('apply').setAttribute('data-txt', lang[selected].btn_apply);
-        document.getElementById('JLD_opm').firstChild.data = lang[selected].txt_wpm;
-        document.getElementById('JLD_acc').firstChild.data = lang[selected].txt_acc;
-        document.getElementById('JLD_trykk').firstChild.data = lang[selected].txt_key;
+        document.getElementById('customlist').placeholder = lang[selected].info;
+
+        for (const [key, value] of Object.entries(lang[selected].ui))
+            document.getElementById(key).firstChild.data = value;
 
         randomize = true;
+
         restart();
     }
 });
 
 function customize() {
-    let customlist = document.getElementById('customlist').value;
+    const customText = document.getElementById('customlist').value;
+    let customList = [];
 
-    if (customlist.charAt(0) === "-") {
-        customlist = customlist.substring(1);
-        customlist = customlist.split(/[\s\n]+/);
-
+    if (customText.charAt(0) === "-") {
+        customList = customText.substring(1).split(/[\s\n]+/);
         randomize = false;
     } else {
-        customlist = customlist.split(/[\s,;\n]+/);
-
+        customList = customText.split(/[\s,;\n]+/);
         randomize = true;
     }
 
-    if (customlist[0] === "") {
-        document.getElementById('error').className = '';
-        return;
-    } else if (customlist.length < 300) {
-        const refill = customlist;
+    if (customList[0] === "") {
+        document.getElementById('warn').className = '';
 
-        while (customlist.length < 300) {
-            customlist = customlist.concat(refill);
+        return;
+    }
+
+    if (customList.length < 300) {
+        while (customList.length < 300) {
+            customList.push(...customList);
         }
-    
-        customlist = customlist.slice(0, 300);
+
+        if (customList.length > 300)
+            customList = customList.slice(0, 300);
     }
     
-    liste = customlist;
+    liste = [...customList];
+
     restart();
+
     document.getElementById('dialog').className = 'hidden';
-    document.getElementById('error').className = 'hidden';
+    document.getElementById('warn').className = 'hidden';
 }
 
 (function () {
-    liste = lang['en'].words;
+    liste = [...lang.en.entries];
     restart();
 })();
