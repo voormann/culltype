@@ -7,22 +7,28 @@ let timer = false;
 let suspended = false;
 let randomize = true;
 let miss = false;
+let beginMsg = "Begin by typing the first word";
 let focusMsg = "Click to focus";
-let placeMsg = "Begin by typing the first word";
 
-function stokk(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-}
+const uiEntry = document.getElementById('entry');
+const uiTid = document.getElementById('tid');
+const uiWords = document.getElementById('words');
+const uiWarn = document.getElementById('warn');
+const uiBackdrop = document.getElementById('backdrop');
+const uiList = document.getElementById('customlist');
 
 function restart() {
     clearInterval(timer);
 
-    if (randomize)
-        stokk(liste);
+    if (randomize) {
+        for (let i = liste.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = liste[i];
+
+            liste[i] = liste[j];
+            liste[j] = temp;
+        }
+    }
 
     ordet = 0;
     poeng = 0;
@@ -31,37 +37,37 @@ function restart() {
     timer = false;
     miss = false;
 
-    document.getElementById('entry').value = "";
-    document.getElementById('tid').firstChild.data = "01:00";
-    document.getElementById('entry').placeholder = placeMsg;
-    document.getElementById('current').className = '';
-    document.getElementById('current').firstChild.data = liste[0];
-    document.getElementById('next').firstChild.data = liste.slice(1, 25).join(" ");
+    uiTid.firstChild.data = "01:00";
+    uiWords.firstChild.data = liste.slice(0, 25).join(" ");
+    uiEntry.value = "";
+    uiEntry.placeholder = beginMsg;
+    uiEntry.className = '';
 }
 
 function removeSuspension() {
     suspended = false;
     miss = false;
 
-    document.getElementById('current').className = '';
-    document.getElementById('entry').className = '';
-    document.getElementById('entry').value = "";
+    uiEntry.className = '';
+    uiEntry.value = "";
 }
 
 function tick() {
     seconds--;
 
     if (seconds <= 0) {
-        suspended = true;
-        document.getElementById('entry').className = 'suspended';
-        window.setTimeout(removeSuspension, 1500);
-
         document.getElementById('opm').firstChild.data = Math.round((poeng + ordet) / 5);
         document.getElementById('noy').firstChild.data = Number((((poeng + ordet) / trykk) * 100).toFixed(2)) + "%";
         document.getElementById('trykk').firstChild.data = trykk;
-        document.getElementById('stats').style.visibility = 'visible';
+        document.getElementById('stats').className = '';
 
         restart();
+
+        uiEntry.className = 'suspended';
+
+        suspended = true;
+
+        window.setTimeout(removeSuspension, 1500);
 
         return;
     }
@@ -69,37 +75,80 @@ function tick() {
     document.getElementById('tid').firstChild.data = "00:" + (seconds < 10 ? "0" + seconds : seconds);
 }
 
+function customize() {
+    const customText = uiList.value;
+    let customList = [];
+
+    if (customText[0] === "-") {
+        customList = customText.substring(1).split(/[\s\n]+/);
+        randomize = false;
+    } else {
+        customList = customText.split(/[\s,;\n]+/);
+        randomize = true;
+    }
+
+    if (customList[0] === "") {
+        uiWarn.style.animation = 'none';
+        uiWarn.offsetWidth;
+        uiWarn.style.animation = 'taylor-swift 500ms linear forwards';
+        uiWarn.className = '';
+
+        return;
+    }
+
+    if (customList.length < 300) {
+        while (customList.length < 300)
+            customList.push(...customList);
+
+        if (customList.length > 300)
+            customList = customList.slice(0, 300);
+    }
+    
+    liste = [...customList];
+
+    restart();
+
+    uiBackdrop.className = 'hidden';
+    uiWarn.className = 'hidden';
+    uiWarn.removeAttribute('style');
+    uiList.removeAttribute('style');
+}
+
 function storForbokstav(ord) {
     return ord[0] !== ord[0].toLowerCase();
 }
 
-document.getElementById('entry').addEventListener('keydown', event => {
+uiEntry.addEventListener('keydown', event => {
     if (suspended || event.repeat)
         return;
 
     if (!timer) {
         timer = window.setInterval(tick, 1000);
 
-        event.target.placeholder = focusMsg;
+        uiEntry.placeholder = focusMsg;
     }
 
     trykk++;
 
     if (event.key === ' ') {
-        if (liste[ordet] === event.target.value) {
-            poeng += liste[ordet].length;
-
-            if (storForbokstav(liste[ordet]))
-                poeng++;
+        if (liste[ordet] === uiEntry.value) {
+            if (storForbokstav(liste[ordet])) {
+                poeng += liste[ordet].length + 1;
+            } else {
+                poeng += liste[ordet].length;
+            }
         }
 
         ordet++;
-        miss = false;
 
-        document.getElementById('current').className = '';
-        document.getElementById('current').firstChild.data = liste[ordet];
-        document.getElementById('next').firstChild.data = liste.slice(ordet + 1, ordet + 25).join(" ");
-        event.target.value = "";
+        if (miss) {
+            miss = false;
+            
+            uiEntry.className = '';
+        }
+
+        uiWords.firstChild.data = liste.slice(ordet, ordet + 25).join(" ");
+        uiEntry.value = "";
 
         event.preventDefault();
     } else if (event.key === 'Tab') {
@@ -109,21 +158,37 @@ document.getElementById('entry').addEventListener('keydown', event => {
     }
 });
 
-document.getElementById('entry').addEventListener('input', event => {
-    if (liste[ordet].indexOf(event.target.value) === 0) {
+uiEntry.addEventListener('input', event => {
+    if (suspended)
+        return;
+
+    if (liste[ordet].indexOf(uiEntry.value) === 0) {
         if (miss) {
             miss = false;
 
-            document.getElementById('current').className = '';
+            uiEntry.className = '';
         }
     } else {
         if (!miss) {
             miss = true;
 
-            document.getElementById('current').className = 'bad';
+            uiEntry.className = 'bad';
         }
     }
 });
+
+function langSelect(taal) {
+    beginMsg = lang[taal].type;
+    focusMsg = lang[taal].focus;
+    liste = [...lang[taal].entries];
+
+    uiList.placeholder = lang[taal].info;
+
+    for (const [key, value] of Object.entries(lang[taal].ui))
+        document.getElementById(key).firstChild.data = value;
+
+    randomize = true;
+}
 
 document.body.addEventListener('click', event => {
     if (suspended)
@@ -134,65 +199,41 @@ document.body.addEventListener('click', event => {
     if (selected === 'reset') {
         restart();
     } else if (selected === 'custom') {
-        document.getElementById('dialog').className = '';
+        uiBackdrop.className = '';
     } else if (selected === 'apply') {
         customize();
-    } else if (selected === 'cancel' || selected === 'dialog') {
-        document.getElementById('dialog').className = 'hidden';
-        document.getElementById('warn').className = 'hidden';
-        document.getElementById('customlist').removeAttribute('style');
+    } else if (selected === 'cancel' || selected === 'backdrop') {
+        uiBackdrop.className = 'hidden';
+        uiWarn.className = 'hidden';
+        uiWarn.removeAttribute('style');
+        uiList.removeAttribute('style');
     } else if (['en', 'no', 'nl', 'de'].includes(selected)) {
-        placeMsg = lang[selected].type;
-        focusMsg = lang[selected].focus;
-        liste = [...lang[selected].entries];
-
-        document.getElementById('customlist').placeholder = lang[selected].info;
-
-        for (const [key, value] of Object.entries(lang[selected].ui))
-            document.getElementById(key).firstChild.data = value;
-
-        randomize = true;
-
+        langSelect(selected);
         restart();
     }
 });
 
-function customize() {
-    const customText = document.getElementById('customlist').value;
-    let customList = [];
-
-    if (customText.charAt(0) === "-") {
-        customList = customText.substring(1).split(/[\s\n]+/);
-        randomize = false;
-    } else {
-        customList = customText.split(/[\s,;\n]+/);
-        randomize = true;
-    }
-
-    if (customList[0] === "") {
-        document.getElementById('warn').className = '';
-
-        return;
-    }
-
-    if (customList.length < 300) {
-        while (customList.length < 300) {
-            customList.push(...customList);
-        }
-
-        if (customList.length > 300)
-            customList = customList.slice(0, 300);
-    }
-    
-    liste = [...customList];
-
-    restart();
-
-    document.getElementById('dialog').className = 'hidden';
-    document.getElementById('warn').className = 'hidden';
-}
-
 (function () {
-    liste = [...lang.en.entries];
+    const availableLanguages = ['no', 'nb', 'nn', 'nl', 'de'];
+
+    let languageAssessment = [
+        ...(window.navigator.languages || []),
+        window.navigator.language,
+        window.navigator.browserLanguage,
+        window.navigator.userLanguage,
+        window.navigator.systemLanguage
+    ]
+    .filter(Boolean)
+    .map(language => language.substr(0, 2))
+    .find(language => availableLanguages.includes(language)) || 'en';
+
+    if (['nb', 'nn'].includes(languageAssessment))
+        languageAssessment = 'no';
+
+    liste = [...lang[languageAssessment].entries];
+
+    if (languageAssessment !== 'en')
+        langSelect(languageAssessment);
+
     restart();
 })();
