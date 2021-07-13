@@ -14,8 +14,6 @@ const uiEntry = document.getElementById('entry');
 const uiTid = document.getElementById('tid');
 const uiWords = document.getElementById('words');
 const uiWarn = document.getElementById('warn');
-const uiBackdrop = document.getElementById('backdrop');
-const uiList = document.getElementById('customlist');
 
 function restart() {
     clearInterval(timer);
@@ -57,7 +55,7 @@ function tick() {
 
     if (seconds <= 0) {
         document.getElementById('opm').firstChild.data = Math.round((poeng + ordet) / 5);
-        document.getElementById('noy').firstChild.data = Number((((poeng + ordet) / trykk) * 100).toFixed(2)) + "%";
+        document.getElementById('noy').firstChild.data = Math.round(((poeng + ordet) / trykk) * 100) + "%";
         document.getElementById('trykk').firstChild.data = trykk;
         document.getElementById('stats').className = '';
 
@@ -72,11 +70,11 @@ function tick() {
         return;
     }
 
-    document.getElementById('tid').firstChild.data = "00:" + (seconds < 10 ? "0" + seconds : seconds);
+    uiTid.firstChild.data = "00:" + (seconds < 10 ? "0" + seconds : seconds);
 }
 
 function customize() {
-    const customText = uiList.value;
+    const customText = document.getElementById('customlist').value;
     let customList = [];
 
     if (customText[0] === "-") {
@@ -88,10 +86,15 @@ function customize() {
     }
 
     if (customList[0] === "") {
-        uiWarn.style.animation = 'none';
-        uiWarn.offsetWidth;
-        uiWarn.style.animation = 'taylor-swift 500ms linear forwards';
         uiWarn.className = '';
+
+        window.requestAnimationFrame(() => {
+            uiWarn.style.animation = 'none';
+
+            window.requestAnimationFrame(() => {
+                uiWarn.style.animation = 'taylor-swift 500ms linear forwards';
+            });
+        });
 
         return;
     }
@@ -108,17 +111,16 @@ function customize() {
 
     restart();
 
-    uiBackdrop.className = 'hidden';
+    document.getElementById('backdrop').className = 'hidden';
     uiWarn.className = 'hidden';
-    uiWarn.removeAttribute('style');
-    uiList.removeAttribute('style');
+    document.getElementById('customlist').removeAttribute('style');
 }
 
-function storForbokstav(ord) {
-    return ord[0] !== ord[0].toLowerCase();
+function storForbokstav(char) {
+    return char !== char.toLowerCase();
 }
 
-uiEntry.addEventListener('keydown', event => {
+uiEntry.addEventListener('keydown', (event) => {
     if (suspended || event.repeat)
         return;
 
@@ -132,7 +134,7 @@ uiEntry.addEventListener('keydown', event => {
 
     if (event.key === ' ') {
         if (liste[ordet] === uiEntry.value) {
-            if (storForbokstav(liste[ordet])) {
+            if (storForbokstav(liste[ordet][0])) {
                 poeng += liste[ordet].length + 1;
             } else {
                 poeng += liste[ordet].length;
@@ -147,8 +149,8 @@ uiEntry.addEventListener('keydown', event => {
             uiEntry.className = '';
         }
 
-        uiWords.firstChild.data = liste.slice(ordet, ordet + 25).join(" ");
         uiEntry.value = "";
+        uiWords.firstChild.data = liste.slice(ordet, ordet + 25).join(" ");
 
         event.preventDefault();
     } else if (event.key === 'Tab') {
@@ -158,7 +160,7 @@ uiEntry.addEventListener('keydown', event => {
     }
 });
 
-uiEntry.addEventListener('input', event => {
+uiEntry.addEventListener('input', () => {
     if (suspended)
         return;
 
@@ -182,7 +184,7 @@ function langSelect(taal) {
     focusMsg = lang[taal].focus;
     liste = [...lang[taal].entries];
 
-    uiList.placeholder = lang[taal].info;
+    document.getElementById('customlist').placeholder = lang[taal].info;
 
     for (const [key, value] of Object.entries(lang[taal].ui))
         document.getElementById(key).firstChild.data = value;
@@ -190,7 +192,7 @@ function langSelect(taal) {
     randomize = true;
 }
 
-document.body.addEventListener('click', event => {
+document.body.addEventListener('click', (event) => {
     if (suspended)
         return;
 
@@ -199,14 +201,13 @@ document.body.addEventListener('click', event => {
     if (selected === 'reset') {
         restart();
     } else if (selected === 'custom') {
-        uiBackdrop.className = '';
+        document.getElementById('backdrop').className = '';
     } else if (selected === 'apply') {
         customize();
     } else if (selected === 'cancel' || selected === 'backdrop') {
-        uiBackdrop.className = 'hidden';
+        document.getElementById('backdrop').className = 'hidden';
         uiWarn.className = 'hidden';
-        uiWarn.removeAttribute('style');
-        uiList.removeAttribute('style');
+        document.getElementById('customlist').removeAttribute('style');
     } else if (['en', 'no', 'nl', 'de'].includes(selected)) {
         langSelect(selected);
         restart();
@@ -214,26 +215,16 @@ document.body.addEventListener('click', event => {
 });
 
 (function () {
-    const availableLanguages = ['no', 'nb', 'nn', 'nl', 'de'];
+    const language = window.navigator.language.slice(0, 2);
+    let assessment = ['no', 'nb', 'nn', 'nl', 'de'].find(item => item === language) || 'en';
 
-    let languageAssessment = [
-        ...(window.navigator.languages || []),
-        window.navigator.language,
-        window.navigator.browserLanguage,
-        window.navigator.userLanguage,
-        window.navigator.systemLanguage
-    ]
-    .filter(Boolean)
-    .map(language => language.substr(0, 2))
-    .find(language => availableLanguages.includes(language)) || 'en';
+    if (['nb', 'nn'].includes(assessment))
+        assessment = 'no';
 
-    if (['nb', 'nn'].includes(languageAssessment))
-        languageAssessment = 'no';
+    liste = [...lang[assessment].entries];
 
-    liste = [...lang[languageAssessment].entries];
-
-    if (languageAssessment !== 'en')
-        langSelect(languageAssessment);
+    if (assessment !== 'en')
+        langSelect(assessment);
 
     restart();
 })();

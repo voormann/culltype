@@ -28,6 +28,7 @@
     --shade: #cfd7dd;
     --red: #ff3b30;
     --yellow: #ffcc00;
+    --fade: 255, 255, 255;
 }
 
 body {
@@ -44,7 +45,6 @@ body {
 #words {
     font-family: 'Roboto Slab', serif;
     font-weight: 400;
-    width: 750px;
     overflow: hidden;
     white-space: nowrap;
     position: relative;
@@ -56,7 +56,7 @@ body {
     right: 0;
     width: 40px;
     height: 100%;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    background-image: linear-gradient(to right, rgba(var(--fade), 0), rgba(var(--fade), 1));
 }
 
 input {
@@ -77,8 +77,9 @@ input:focus {
     border-style: none none solid;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
     color: #8e8e93;
+    opacity: 1;
 }
 
 input:focus::placeholder {
@@ -184,39 +185,35 @@ button:hover {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.6);
-    z-index: 18;
+    z-index: 23;
     animation: dale 300ms ease forwards;
 }
 
 @keyframes dale {
     from {
         opacity: 0;
-        transform: scale3d(1.1, 1.1, 1);
+        transform: scale(1.1);
     }
 
     to {
         opacity: 1;
-        transform: scale3d(1, 1, 1);
+        transform: scale(1);
     }
 }
 
 #dialog {
-    position: absolute;
-    top: 150px;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
+    margin: 150px auto 0;
     max-width: 750px;
     background-color: var(--bg);
     padding: 20px;
     border-radius: 6px;
-    z-index: 100;
-    box-shadow: 0 10px 20px rgb(0 0 0 / 10%), 0 6px 6px rgb(0 0 0 / 16%);
+    box-shadow: 0 10px 20px rgb(0, 0, 0, 0.1), 0 6px 6px rgb(0, 0, 0, 0.16);
 }
 
-#dialog > button {
-    float: right;
-    margin-left: 5px;
+#meny {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
 }
 
 textarea {
@@ -235,17 +232,13 @@ textarea {
     margin-bottom: 8px;
 }
 
-textarea::placeholder {
-    color: #8e8e93;
-}
-
 textarea:focus {
     border: 2px var(--prime) solid;
 }
 
 #warn {
     color: var(--red);
-    float: left;
+    position: absolute;
     font-size: 18px;
     font-weight: 500;
 }
@@ -283,9 +276,6 @@ textarea:focus {
         --shade: #20293c;
         --red: #ff453a;
         --yellow: #ffd60a;
-    }
-
-    #words::after {
-        background: linear-gradient(to right, rgba(24, 24, 24, 0), rgba(24, 24, 24, 1));
+        --fade: 24, 24, 24;
     }
 }
