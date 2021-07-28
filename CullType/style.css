@@ -1,6 +1,5 @@
 @font-face {
     font-family: 'Roboto';
-    font-style: normal;
     font-weight: 300;
     font-display: swap;
     src: url('roboto300.woff2') format('woff2');
@@ -8,7 +7,6 @@
 
 @font-face {
     font-family: 'Roboto';
-    font-style: normal;
     font-weight: 500;
     font-display: swap;
     src: url('roboto500.woff2') format('woff2');
@@ -16,7 +14,6 @@
 
 @font-face {
     font-family: 'Roboto Slab';
-    font-style: normal;
     font-weight: 400;
     font-display: swap;
     src: url('robotoslab.woff2') format('woff2');
@@ -52,9 +49,8 @@ body {
 
 input {
     font-family: 'Roboto Slab', serif;
-    font-weight: 400;
-    color: var(--prime);
-    background-color: var(--bg);
+    color: inherit;
+    background-color: inherit;
     border-width: 2px;
     border-style: none none dotted;
     border-color: var(--prime);
@@ -73,31 +69,26 @@ input::placeholder, textarea::placeholder {
     opacity: 1;
 }
 
-input:focus::placeholder {
-    opacity: 0;
-}
-
 section {
     width: 750px;
     margin: 150px auto 0;
 }
 
 h4 {
-    margin: 20px 0 0;
+    margin: 20px 0 5px;
     font-size: 20px;
     text-transform: uppercase;
     font-weight: 500;
 }
 
 button {
-    font-family: 'Roboto', sans-serif;
+    font-family: inherit;
     font-weight: 500;
     height: 45px;
     width: 150px;
-    padding: 5px;
     font-size: 17px;
     letter-spacing: 2px;
-    color: var(--prime);
+    color: inherit;
     background-color: var(--shade);
     border: 0;
     border-radius: 4px;
@@ -120,13 +111,15 @@ button:hover {
     color: var(--yellow);
 }
 
-#hud {
+.uniform {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 5px;
 }
 
 #reset {
+    fill: var(--prime);
     cursor: pointer;
     z-index: 2;
     transition: transform 200ms ease;
@@ -141,20 +134,7 @@ button:hover {
     transition: transform 32ms ease;
 }
 
-#arrow {
-    fill: var(--prime);
-}
-
-#languages {
-    display: flex;
-    justify-content: space-between;
-    gap: 5px;
-    margin-top: 5px;
-}
-
 #stats {
-    display: flex;
-    justify-content: space-between;
     text-align: center;
     animation: toning 300ms ease;
 }
@@ -171,10 +151,7 @@ button:hover {
 
 #backdrop {
     position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 23;
     animation: dale 300ms ease forwards;
@@ -208,29 +185,29 @@ button:hover {
 }
 
 textarea {
-    font-family: 'Roboto', sans-serif;
+    font-family: inherit;
     width: 100%;
     height: 300px;
-    font-size: 18px;
+    font-size: 17px;
     box-sizing: border-box;
     resize: vertical;
     outline: 0;
     border: 2px var(--shade) solid;
     border-radius: 4px;
-    color: var(--color);
-    background-color: var(--bg);
+    color: inherit;
+    background-color: inherit;
     display: block;
     margin-bottom: 8px;
 }
 
 textarea:focus {
-    border: 2px var(--prime) solid;
+    border-color: var(--prime);
 }
 
 #warn {
     color: var(--red);
     position: absolute;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
 }
 
@@ -257,7 +234,7 @@ textarea:focus {
 }
 
 .hidden {
-    display: none !important;
+    display: none;
 }
 
 @media (prefers-color-scheme: dark) {

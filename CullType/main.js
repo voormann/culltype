@@ -2,20 +2,21 @@ let liste = [];
 let ordet = 0;
 let poeng = 0;
 let trykk = 0;
-let seconds = 60;
+let seconds = 59;
 let timer = false;
 let suspended = false;
 let randomize = true;
 let miss = false;
-let beginMsg = "Begin by typing the first word";
-let focusMsg = "Click to focus";
+let beginMsg = "Start by typing the first word";
 
-const uiEntry = document.getElementById('entry');
+const uiEntry = document.querySelector('input');
 const uiTid = document.getElementById('tid');
 const uiWords = document.getElementById('words');
 const uiWarn = document.getElementById('warn');
+const uiBackdrop = document.getElementById('backdrop');
+const uiList = document.querySelector('textarea');
 
-function restart() {
+function restart(entry) {
     clearInterval(timer);
 
     if (randomize) {
@@ -31,15 +32,19 @@ function restart() {
     ordet = 0;
     poeng = 0;
     trykk = 0;
-    seconds = 60;
+    seconds = 59;
     timer = false;
     miss = false;
 
     uiTid.firstChild.data = "01:00";
     uiWords.firstChild.data = liste.slice(0, 25).join(" ");
     uiEntry.value = "";
-    uiEntry.placeholder = beginMsg;
-    uiEntry.className = '';
+    uiEntry.focus();
+
+    if (entry) {
+        uiEntry.placeholder = beginMsg;
+        uiEntry.className = '';
+    }
 }
 
 function removeSuspension() {
@@ -48,24 +53,24 @@ function removeSuspension() {
 
     uiEntry.className = '';
     uiEntry.value = "";
+    uiEntry.placeholder = beginMsg;
 }
 
 function tick() {
     seconds--;
 
-    if (seconds <= 0) {
+    if (seconds < 0) {
         document.getElementById('opm').firstChild.data = Math.round((poeng + ordet) / 5);
         document.getElementById('noy').firstChild.data = Math.round(((poeng + ordet) / trykk) * 100) + "%";
         document.getElementById('trykk').firstChild.data = trykk;
-        document.getElementById('stats').className = '';
-
-        restart();
-
+        document.getElementById('stats').className = 'uniform';
         uiEntry.className = 'suspended';
 
         suspended = true;
 
         window.setTimeout(removeSuspension, 1500);
+
+        restart(false);
 
         return;
     }
@@ -74,7 +79,7 @@ function tick() {
 }
 
 function customize() {
-    const customText = document.getElementById('customlist').value;
+    const customText = uiList.value;
     let customList = [];
 
     if (customText[0] === "-") {
@@ -86,6 +91,7 @@ function customize() {
     }
 
     if (customList[0] === "") {
+        uiList.focus();
         uiWarn.className = '';
 
         window.requestAnimationFrame(() => {
@@ -109,11 +115,11 @@ function customize() {
     
     liste = [...customList];
 
-    restart();
+    restart(true);
 
-    document.getElementById('backdrop').className = 'hidden';
+    uiBackdrop.className = 'hidden';
     uiWarn.className = 'hidden';
-    document.getElementById('customlist').removeAttribute('style');
+    uiList.removeAttribute('style');
 }
 
 function storForbokstav(char) {
@@ -124,10 +130,12 @@ uiEntry.addEventListener('keydown', (event) => {
     if (suspended || event.repeat)
         return;
 
-    if (!timer) {
+    if (!timer && event.key.length === 1) {
         timer = window.setInterval(tick, 1000);
+        trykk = 0;
 
-        uiEntry.placeholder = focusMsg;
+        uiTid.firstChild.data = "00:59";
+        uiEntry.placeholder = "";
     }
 
     trykk++;
@@ -154,7 +162,7 @@ uiEntry.addEventListener('keydown', (event) => {
 
         event.preventDefault();
     } else if (event.key === 'Tab') {
-        restart();
+        restart(true);
 
         event.preventDefault();
     }
@@ -181,10 +189,9 @@ uiEntry.addEventListener('input', () => {
 
 function langSelect(taal) {
     beginMsg = lang[taal].type;
-    focusMsg = lang[taal].focus;
     liste = [...lang[taal].entries];
 
-    document.getElementById('customlist').placeholder = lang[taal].info;
+    uiList.placeholder = lang[taal].info;
 
     for (const [key, value] of Object.entries(lang[taal].ui))
         document.getElementById(key).firstChild.data = value;
@@ -193,24 +200,23 @@ function langSelect(taal) {
 }
 
 document.body.addEventListener('click', (event) => {
-    if (suspended)
-        return;
-
     const selected = event.target.id;
     
     if (selected === 'reset') {
-        restart();
+        restart(true);
     } else if (selected === 'custom') {
-        document.getElementById('backdrop').className = '';
+        uiBackdrop.className = '';
+        uiList.focus();
     } else if (selected === 'apply') {
         customize();
     } else if (selected === 'cancel' || selected === 'backdrop') {
-        document.getElementById('backdrop').className = 'hidden';
+        uiBackdrop.className = 'hidden';
         uiWarn.className = 'hidden';
-        document.getElementById('customlist').removeAttribute('style');
+        uiList.removeAttribute('style');
+        uiEntry.focus();
     } else if (['en', 'no', 'nl', 'de'].includes(selected)) {
         langSelect(selected);
-        restart();
+        restart(true);
     }
 });
 
@@ -226,5 +232,5 @@ document.body.addEventListener('click', (event) => {
     if (assessment !== 'en')
         langSelect(assessment);
 
-    restart();
+    restart(true);
 })();
