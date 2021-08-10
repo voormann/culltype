@@ -6,14 +6,13 @@ let seconds = 59;
 let timer = false;
 let suspended = false;
 let randomize = true;
-let miss = false;
 let beginMsg = "Start by typing the first word";
 
 const uiEntry = document.querySelector('input');
-const uiTid = document.getElementById('tid');
-const uiWords = document.getElementById('words');
-const uiWarn = document.getElementById('warn');
-const uiBackdrop = document.getElementById('backdrop');
+const uiTid = document.querySelector('span');
+const uiWords = document.querySelector('.words');
+const uiWarn = document.querySelector('.warn');
+const uiBackdrop = document.querySelector('aside');
 const uiList = document.querySelector('textarea');
 
 function restart(entry) {
@@ -34,7 +33,6 @@ function restart(entry) {
     trykk = 0;
     seconds = 59;
     timer = false;
-    miss = false;
 
     uiTid.firstChild.data = "01:00";
     uiWords.firstChild.data = liste.slice(0, 25).join(" ");
@@ -47,9 +45,12 @@ function restart(entry) {
     }
 }
 
+function storForbokstav(char) {
+    return char !== char.toLowerCase();
+}
+
 function removeSuspension() {
     suspended = false;
-    miss = false;
 
     uiEntry.className = '';
     uiEntry.value = "";
@@ -60,10 +61,20 @@ function tick() {
     seconds--;
 
     if (seconds < 0) {
-        document.getElementById('opm').firstChild.data = Math.round((poeng + ordet) / 5);
-        document.getElementById('noy').firstChild.data = Math.round(((poeng + ordet) / trykk) * 100) + "%";
-        document.getElementById('trykk').firstChild.data = trykk;
-        document.getElementById('stats').className = 'uniform';
+        let tally = ordet;
+
+        for (let i = 0; i < poeng; i++) {
+            if (storForbokstav(liste[i][0])) {
+                tally += liste[i].length + 1;
+            } else {
+                tally += liste[i].length;
+            }
+        }
+
+        document.querySelector('.opm').firstChild.data = Math.round(tally / 5);
+        document.querySelector('.noy').firstChild.data = Math.round((tally / trykk) * 100) + "%";
+        document.querySelector('.trykk').firstChild.data = trykk;
+        document.querySelector('.stats').style.opacity = '1';
         uiEntry.className = 'suspended';
 
         suspended = true;
@@ -92,7 +103,7 @@ function customize() {
 
     if (customList[0] === "") {
         uiList.focus();
-        uiWarn.className = '';
+        uiWarn.hidden = false;
 
         window.requestAnimationFrame(() => {
             uiWarn.style.animation = 'none';
@@ -109,21 +120,16 @@ function customize() {
         while (customList.length < 300)
             customList.push(...customList);
 
-        if (customList.length > 300)
-            customList = customList.slice(0, 300);
+        liste = customList.slice(0, 300);
+    } else {
+        liste = [...customList];
     }
-    
-    liste = [...customList];
 
     restart(true);
 
-    uiBackdrop.className = 'hidden';
-    uiWarn.className = 'hidden';
+    uiBackdrop.hidden = true;
+    uiWarn.hidden = true;
     uiList.removeAttribute('style');
-}
-
-function storForbokstav(char) {
-    return char !== char.toLowerCase();
 }
 
 uiEntry.addEventListener('keydown', (event) => {
@@ -141,22 +147,12 @@ uiEntry.addEventListener('keydown', (event) => {
     trykk++;
 
     if (event.key === ' ') {
-        if (liste[ordet] === uiEntry.value) {
-            if (storForbokstav(liste[ordet][0])) {
-                poeng += liste[ordet].length + 1;
-            } else {
-                poeng += liste[ordet].length;
-            }
-        }
+        if (liste[ordet] === uiEntry.value)
+            poeng++;
 
         ordet++;
 
-        if (miss) {
-            miss = false;
-            
-            uiEntry.className = '';
-        }
-
+        uiEntry.className = '';
         uiEntry.value = "";
         uiWords.firstChild.data = liste.slice(ordet, ordet + 25).join(" ");
 
@@ -169,52 +165,39 @@ uiEntry.addEventListener('keydown', (event) => {
 });
 
 uiEntry.addEventListener('input', () => {
-    if (suspended)
-        return;
-
-    if (liste[ordet].indexOf(uiEntry.value) === 0) {
-        if (miss) {
-            miss = false;
-
-            uiEntry.className = '';
-        }
-    } else {
-        if (!miss) {
-            miss = true;
-
-            uiEntry.className = 'bad';
-        }
-    }
+    if (!suspended)
+        uiEntry.className = liste[ordet].startsWith(uiEntry.value) ? '' : 'bad';
 });
 
 function langSelect(taal) {
     beginMsg = lang[taal].type;
-    liste = [...lang[taal].entries];
 
     uiList.placeholder = lang[taal].info;
 
     for (const [key, value] of Object.entries(lang[taal].ui))
-        document.getElementById(key).firstChild.data = value;
+        document.querySelector(`.${key}`).firstChild.data = value;
 
     randomize = true;
 }
 
 document.body.addEventListener('click', (event) => {
-    const selected = event.target.id;
+    const selected = event.target.getAttribute('class');
     
     if (selected === 'reset') {
         restart(true);
     } else if (selected === 'custom') {
-        uiBackdrop.className = '';
+        uiBackdrop.hidden = false;
         uiList.focus();
     } else if (selected === 'apply') {
         customize();
-    } else if (selected === 'cancel' || selected === 'backdrop') {
-        uiBackdrop.className = 'hidden';
-        uiWarn.className = 'hidden';
+    } else if (selected === 'cancel' || event.target === uiBackdrop) {
+        uiBackdrop.hidden = true;
+        uiWarn.hidden = true;
         uiList.removeAttribute('style');
         uiEntry.focus();
     } else if (['en', 'no', 'nl', 'de'].includes(selected)) {
+        liste = lang[selected].words.split(" ");
+
         langSelect(selected);
         restart(true);
     }
@@ -227,7 +210,7 @@ document.body.addEventListener('click', (event) => {
     if (['nb', 'nn'].includes(assessment))
         assessment = 'no';
 
-    liste = [...lang[assessment].entries];
+    liste = lang[assessment].words.split(" ");
 
     if (assessment !== 'en')
         langSelect(assessment);

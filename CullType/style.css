@@ -2,21 +2,21 @@
     font-family: 'Roboto';
     font-weight: 300;
     font-display: swap;
-    src: url('roboto300.woff2') format('woff2');
+    src: url('roboto300.woff2');
 }
 
 @font-face {
     font-family: 'Roboto';
     font-weight: 500;
     font-display: swap;
-    src: url('roboto500.woff2') format('woff2');
+    src: url('roboto500.woff2');
 }
 
 @font-face {
     font-family: 'Roboto Slab';
     font-weight: 400;
     font-display: swap;
-    src: url('robotoslab.woff2') format('woff2');
+    src: url('robotoslab.woff2');
 }
 
 :root {
@@ -28,9 +28,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 30px;
+    font: 300 30px 'Roboto', sans-serif;
     color: var(--prime);
     background-color: var(--bg);
     user-select: none;
@@ -38,9 +36,11 @@ body {
     margin: 0;
 }
 
-#words {
-    font-family: 'Roboto Slab', serif;
-    font-weight: 400;
+.words, input {
+    font: 400 30px 'Roboto Slab', serif;
+}
+
+.words {
     overflow: hidden;
     white-space: nowrap;
     -mask-image: linear-gradient(to right, black 95%, transparent 100%);
@@ -48,20 +48,17 @@ body {
 }
 
 input {
-    font-family: 'Roboto Slab', serif;
     color: inherit;
     background-color: inherit;
-    border-width: 2px;
-    border-style: none none dotted;
-    border-color: var(--prime);
+    border: 2px none var(--prime);
+    border-bottom-style: dotted;
     padding-left: 0;
-    font-size: 30px;
     width: 600px;
     outline: 0;
 }
 
 input:focus {
-    border-style: none none solid;
+    border-bottom-style: solid;
 }
 
 input::placeholder, textarea::placeholder {
@@ -69,38 +66,30 @@ input::placeholder, textarea::placeholder {
     opacity: 1;
 }
 
-section {
-    width: 750px;
-    margin: 150px auto 0;
-}
-
 h4 {
-    margin: 20px 0 5px;
     font-size: 20px;
-    text-transform: uppercase;
     font-weight: 500;
+    margin: 20px 0 5px;
+    text-transform: uppercase;
 }
 
 button {
-    font-family: inherit;
-    font-weight: 500;
+    font: 500 17px 'Roboto', sans-serif;
     height: 45px;
     width: 150px;
-    font-size: 17px;
     letter-spacing: 2px;
     color: inherit;
     background-color: var(--shade);
-    border: 0;
+    border: 2px var(--shade) solid;
     border-radius: 4px;
     text-transform: uppercase;
     outline: 0;
     cursor: pointer;
-    transition: color 200ms ease, background-color 200ms ease;
+    transition: border-color 200ms ease;
 }
 
 button:hover {
-    color: var(--bg);
-    background-color: var(--prime);
+    border-color: var(--prime);
 }
 
 .bad {
@@ -118,41 +107,32 @@ button:hover {
     gap: 5px;
 }
 
-#reset {
+.reset {
     fill: var(--prime);
     cursor: pointer;
     z-index: 2;
     transition: transform 200ms ease;
 }
 
-#reset:hover {
+.reset:hover {
     transform: rotate(-180deg) scale(1.05);
 }
 
-#reset:active {
+.reset:active {
     transform: rotate(-180deg) scale(0.95);
     transition: transform 32ms ease;
 }
 
-#stats {
+.stats {
     text-align: center;
-    animation: toning 300ms ease;
+    opacity: 0;
+    transition: opacity 300ms ease;
 }
 
-@keyframes toning {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-#backdrop {
+aside {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.4);
     z-index: 23;
     animation: dale 300ms ease forwards;
 }
@@ -169,46 +149,47 @@ button:hover {
     }
 }
 
-#dialog {
-    margin: 150px auto 0;
+main, section {
     max-width: 750px;
+    margin: 150px auto 0;
+}
+
+section {
+    font: 500 17px 'Roboto', sans-serif;
     background-color: var(--bg);
     padding: 20px;
     border-radius: 6px;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.25);
 }
 
-#meny {
+.meny {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
 }
 
 textarea {
-    font-family: inherit;
+    font: inherit;
     width: 100%;
     height: 300px;
-    font-size: 17px;
     box-sizing: border-box;
     resize: vertical;
     outline: 0;
-    border: 2px var(--shade) solid;
+    border: 2px solid var(--shade);
     border-radius: 4px;
     color: inherit;
     background-color: inherit;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 textarea:focus {
     border-color: var(--prime);
 }
 
-#warn {
+.warn {
     color: var(--red);
     position: absolute;
-    font-size: 17px;
-    font-weight: 500;
 }
 
 @keyframes taylor-swift {
@@ -231,10 +212,6 @@ textarea:focus {
     0%, 100% {
         transform: translateX(0);
     }
-}
-
-.hidden {
-    display: none;
 }
 
 @media (prefers-color-scheme: dark) {
