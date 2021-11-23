@@ -12,8 +12,18 @@ const uiEntry = document.querySelector('input');
 const uiTid = document.querySelector('span');
 const uiWords = document.querySelector('.words');
 const uiWarn = document.querySelector('.warn');
-const uiBackdrop = document.querySelector('aside');
+const uiBackdrop = document.querySelector('.close');
 const uiList = document.querySelector('textarea');
+
+function mergeWords(cycle) {
+    let freight = liste[cycle];
+
+    while (freight.length < 60) {
+        freight += " " + liste[++cycle];
+    }
+
+    return freight;
+}
 
 function restart(entry) {
     clearInterval(timer);
@@ -34,8 +44,8 @@ function restart(entry) {
     seconds = 59;
     timer = false;
 
-    uiTid.firstChild.data = "01:00";
-    uiWords.firstChild.data = liste.slice(0, 25).join(" ");
+    uiTid.firstChild.nodeValue = "01:00";
+    uiWords.firstChild.nodeValue = mergeWords(0);
     uiEntry.value = "";
     uiEntry.focus();
 
@@ -45,8 +55,8 @@ function restart(entry) {
     }
 }
 
-function storForbokstav(char) {
-    return char !== char.toLowerCase();
+function liten(char) {
+    return char === char.toLowerCase();
 }
 
 function removeSuspension() {
@@ -58,35 +68,32 @@ function removeSuspension() {
 }
 
 function tick() {
-    seconds--;
-
-    if (seconds < 0) {
+    if (--seconds < 0) {
         let tally = ordet;
 
         for (let i = 0; i < poeng; i++) {
-            if (storForbokstav(liste[i][0])) {
-                tally += liste[i].length + 1;
-            } else {
+            if (liten(liste[i][0])) {
                 tally += liste[i].length;
+            } else {
+                tally += liste[i].length + 1;
             }
         }
 
-        document.querySelector('.opm').firstChild.data = Math.round(tally / 5);
-        document.querySelector('.noy').firstChild.data = Math.round((tally / trykk) * 100) + "%";
-        document.querySelector('.trykk').firstChild.data = trykk;
+        document.querySelector('.opm').firstChild.nodeValue = Math.round(tally / 5);
+        document.querySelector('.noy').firstChild.nodeValue = Math.round((tally / trykk) * 100) + "%";
+        document.querySelector('.trykk').firstChild.nodeValue = trykk;
         document.querySelector('.stats').style.opacity = '1';
         uiEntry.className = 'suspended';
 
         suspended = true;
 
         window.setTimeout(removeSuspension, 1500);
-
         restart(false);
 
         return;
     }
 
-    uiTid.firstChild.data = "00:" + (seconds < 10 ? "0" + seconds : seconds);
+    uiTid.firstChild.nodeValue = "00:" + (seconds < 10 ? "0" + seconds : seconds);
 }
 
 function customize() {
@@ -116,14 +123,10 @@ function customize() {
         return;
     }
 
-    if (customList.length < 300) {
-        while (customList.length < 300)
-            customList.push(...customList);
+    while (customList.length < 300)
+        customList.push(...customList);
 
-        liste = customList.slice(0, 300);
-    } else {
-        liste = [...customList];
-    }
+    liste = [...customList];
 
     restart(true);
 
@@ -140,7 +143,7 @@ uiEntry.addEventListener('keydown', (event) => {
         timer = window.setInterval(tick, 1000);
         trykk = 0;
 
-        uiTid.firstChild.data = "00:59";
+        uiTid.firstChild.nodeValue = "00:59";
         uiEntry.placeholder = "";
     }
 
@@ -150,11 +153,9 @@ uiEntry.addEventListener('keydown', (event) => {
         if (liste[ordet] === uiEntry.value)
             poeng++;
 
-        ordet++;
-
         uiEntry.className = '';
         uiEntry.value = "";
-        uiWords.firstChild.data = liste.slice(ordet, ordet + 25).join(" ");
+        uiWords.firstChild.nodeValue = mergeWords(++ordet);
 
         event.preventDefault();
     } else if (event.key === 'Tab') {
@@ -169,19 +170,24 @@ uiEntry.addEventListener('input', () => {
         uiEntry.className = liste[ordet].startsWith(uiEntry.value) ? '' : 'bad';
 });
 
-function langSelect(taal) {
-    beginMsg = lang[taal].type;
+function localize(taal, verander) {
+    if (verander) {
+        uiList.placeholder = lang[taal].info;
 
-    uiList.placeholder = lang[taal].info;
+        for (const [key, value] of Object.entries(lang[taal].ui))
+            document.querySelector(`.${key}`).firstChild.nodeValue = value;
 
-    for (const [key, value] of Object.entries(lang[taal].ui))
-        document.querySelector(`.${key}`).firstChild.data = value;
+        beginMsg = lang[taal].type;
+        randomize = true;
+    }
 
-    randomize = true;
+    liste = lang[taal].words.split(" ");
+
+    restart(true);
 }
 
 document.body.addEventListener('click', (event) => {
-    const selected = event.target.getAttribute('class');
+    const selected = event.target.classList[0];
     
     if (selected === 'reset') {
         restart(true);
@@ -190,30 +196,25 @@ document.body.addEventListener('click', (event) => {
         uiList.focus();
     } else if (selected === 'apply') {
         customize();
-    } else if (selected === 'cancel' || event.target === uiBackdrop) {
+    } else if (selected === 'close') {
         uiBackdrop.hidden = true;
         uiWarn.hidden = true;
         uiList.removeAttribute('style');
         uiEntry.focus();
-    } else if (['en', 'no', 'nl', 'de'].includes(selected)) {
-        liste = lang[selected].words.split(" ");
-
-        langSelect(selected);
-        restart(true);
+    } else if (selected === 'lang') {
+        localize(event.target.classList[1], true);
     }
 });
 
 (function () {
-    const language = window.navigator.language.slice(0, 2);
-    let assessment = ['no', 'nb', 'nn', 'nl', 'de'].find(item => item === language) || 'en';
+    let presume = window.navigator.language.slice(0, 2);
 
-    if (['nb', 'nn'].includes(assessment))
-        assessment = 'no';
+    if (['nb', 'nn'].includes(presume))
+        presume = 'no';
 
-    liste = lang[assessment].words.split(" ");
-
-    if (assessment !== 'en')
-        langSelect(assessment);
-
-    restart(true);
+    if (['no', 'nl', 'de'].includes(presume)) {
+        localize(presume, true);
+    } else {
+        localize('en', false);
+    }
 })();

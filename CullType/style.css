@@ -50,15 +50,15 @@ body {
 input {
     color: inherit;
     background-color: inherit;
-    border: 2px none var(--prime);
-    border-bottom-style: dotted;
-    padding-left: 0;
+    border: 0;
+    border-bottom: 2px solid var(--shade);
     width: 600px;
+    padding: 0;
     outline: 0;
 }
 
 input:focus {
-    border-bottom-style: solid;
+    border-bottom-color: var(--prime);
 }
 
 input::placeholder, textarea::placeholder {
@@ -104,7 +104,7 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 5px;
+    column-gap: 5px;
 }
 
 .reset {
@@ -165,7 +165,7 @@ section {
 .meny {
     display: flex;
     justify-content: flex-end;
-    gap: 5px;
+    column-gap: 5px;
 }
 
 textarea {
