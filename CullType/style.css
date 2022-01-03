@@ -43,7 +43,7 @@ body {
 .words {
     overflow: hidden;
     white-space: nowrap;
-    -mask-image: linear-gradient(to right, black 95%, transparent 100%);
+    mask-image: linear-gradient(to right, black 95%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, black 95%, transparent 100%);
 }
 
@@ -57,11 +57,11 @@ input {
     outline: 0;
 }
 
-input:focus {
-    border-bottom-color: var(--prime);
+input:focus, textarea:focus {
+    border-color: var(--prime);
 }
 
-input::placeholder, textarea::placeholder {
+::placeholder {
     color: #8e8e93;
     opacity: 1;
 }
@@ -73,17 +73,32 @@ h4 {
     text-transform: uppercase;
 }
 
+textarea, button {
+    outline: 0;
+    border-radius: 4px;
+    color: inherit;
+}
+
+textarea {
+    font: inherit;
+    width: 100%;
+    height: 300px;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 2px solid var(--shade);
+    background-color: inherit;
+    display: block;
+    margin-bottom: 10px;
+}
+
 button {
     font: 500 17px 'Roboto', sans-serif;
     height: 45px;
     width: 150px;
     letter-spacing: 2px;
-    color: inherit;
     background-color: var(--shade);
     border: 2px var(--shade) solid;
-    border-radius: 4px;
     text-transform: uppercase;
-    outline: 0;
     cursor: pointer;
     transition: border-color 200ms ease;
 }
@@ -100,25 +115,25 @@ button:hover {
     color: var(--yellow);
 }
 
-.uniform {
+section {
     display: flex;
     align-items: center;
     justify-content: space-between;
     column-gap: 5px;
 }
 
-.reset {
+svg {
     fill: var(--prime);
     cursor: pointer;
     z-index: 2;
     transition: transform 200ms ease;
 }
 
-.reset:hover {
+svg:hover {
     transform: rotate(-180deg) scale(1.05);
 }
 
-.reset:active {
+svg:active {
     transform: rotate(-180deg) scale(0.95);
     transition: transform 32ms ease;
 }
@@ -149,12 +164,12 @@ aside {
     }
 }
 
-main, section {
+article, main {
     max-width: 750px;
     margin: 150px auto 0;
 }
 
-section {
+article {
     font: 500 17px 'Roboto', sans-serif;
     background-color: var(--bg);
     padding: 20px;
@@ -166,25 +181,6 @@ section {
     display: flex;
     justify-content: flex-end;
     column-gap: 5px;
-}
-
-textarea {
-    font: inherit;
-    width: 100%;
-    height: 300px;
-    box-sizing: border-box;
-    resize: vertical;
-    outline: 0;
-    border: 2px solid var(--shade);
-    border-radius: 4px;
-    color: inherit;
-    background-color: inherit;
-    display: block;
-    margin-bottom: 10px;
-}
-
-textarea:focus {
-    border-color: var(--prime);
 }
 
 .warn {

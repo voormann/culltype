@@ -18,9 +18,8 @@ const uiList = document.querySelector('textarea');
 function mergeWords(cycle) {
     let freight = liste[cycle];
 
-    while (freight.length < 60) {
+    while (freight.length < 60)
         freight += " " + liste[++cycle];
-    }
 
     return freight;
 }
@@ -55,10 +54,6 @@ function restart(entry) {
     }
 }
 
-function liten(char) {
-    return char === char.toLowerCase();
-}
-
 function removeSuspension() {
     suspended = false;
 
@@ -69,18 +64,10 @@ function removeSuspension() {
 
 function tick() {
     if (--seconds < 0) {
-        let tally = ordet;
+        poeng += ordet;
 
-        for (let i = 0; i < poeng; i++) {
-            if (liten(liste[i][0])) {
-                tally += liste[i].length;
-            } else {
-                tally += liste[i].length + 1;
-            }
-        }
-
-        document.querySelector('.opm').firstChild.nodeValue = Math.round(tally / 5);
-        document.querySelector('.noy').firstChild.nodeValue = Math.round((tally / trykk) * 100) + "%";
+        document.querySelector('.opm').firstChild.nodeValue = Math.round(poeng / 5);
+        document.querySelector('.noy').firstChild.nodeValue = Math.round((poeng / trykk) * 100) + "%";
         document.querySelector('.trykk').firstChild.nodeValue = trykk;
         document.querySelector('.stats').style.opacity = '1';
         uiEntry.className = 'suspended';
@@ -97,18 +84,18 @@ function tick() {
 }
 
 function customize() {
-    const customText = uiList.value;
-    let customList = [];
+    const excerpt = uiList.value;
+    let indices = [];
 
-    if (customText[0] === "-") {
-        customList = customText.substring(1).split(/[\s\n]+/);
+    if (excerpt[0] === "-") {
+        indices = excerpt.substring(1).split(/[\s\n]+/);
         randomize = false;
     } else {
-        customList = customText.split(/[\s,;\n]+/);
+        indices = excerpt.split(/[\s,;\n]+/);
         randomize = true;
     }
 
-    if (customList[0] === "") {
+    if (indices[0] === "") {
         uiList.focus();
         uiWarn.hidden = false;
 
@@ -123,10 +110,10 @@ function customize() {
         return;
     }
 
-    while (customList.length < 300)
-        customList.push(...customList);
+    while (indices.length < 300)
+        indices.push(...indices);
 
-    liste = [...customList];
+    liste = [...indices];
 
     restart(true);
 
@@ -135,13 +122,16 @@ function customize() {
     uiList.removeAttribute('style');
 }
 
+function liten(char) {
+    return char === char.toLowerCase();
+}
+
 uiEntry.addEventListener('keydown', (event) => {
     if (suspended || event.repeat)
         return;
 
-    if (!timer && event.key.length === 1) {
+    if (!timer) {
         timer = window.setInterval(tick, 1000);
-        trykk = 0;
 
         uiTid.firstChild.nodeValue = "00:59";
         uiEntry.placeholder = "";
@@ -150,11 +140,18 @@ uiEntry.addEventListener('keydown', (event) => {
     trykk++;
 
     if (event.key === ' ') {
-        if (liste[ordet] === uiEntry.value)
-            poeng++;
+        const index = liste[ordet];
 
-        uiEntry.className = '';
+        if (index === uiEntry.value) {
+            if (liten(index[0])) {
+                poeng += index.length;
+            } else {
+                poeng += index.length + 1;
+            }
+        }
+
         uiEntry.value = "";
+        uiEntry.className = '';
         uiWords.firstChild.nodeValue = mergeWords(++ordet);
 
         event.preventDefault();
@@ -188,6 +185,9 @@ function localize(taal, verander) {
 
 document.body.addEventListener('click', (event) => {
     const selected = event.target.classList[0];
+
+    if (!selected)
+        return;
     
     if (selected === 'reset') {
         restart(true);
@@ -201,8 +201,8 @@ document.body.addEventListener('click', (event) => {
         uiWarn.hidden = true;
         uiList.removeAttribute('style');
         uiEntry.focus();
-    } else if (selected === 'lang') {
-        localize(event.target.classList[1], true);
+    } else if (selected.length === 2) {
+        localize(selected, true);
     }
 });
 

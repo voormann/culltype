@@ -10,23 +10,23 @@
     <body>
         <main>
             <div class="words">The quick brown fox jumps over the lazy dog</div>
-            <div class="uniform">
+            <section>
                 <input type="text" placeholder="Start by typing the first word" spellcheck="false" autocomplete="off">
                 <span>01:00</span>
                 <svg class="reset" width="32" height="32" viewBox="0 0 612 612">
                     <title>[TAB]</title>
                     <path d="M593 383H402c-11 0-11 38 0 38h146a268 268 0 01-507-77H3a306 306 0 00571 110v139c0 10 38 10 38 0V402c0-21-19-19-19-19zM19 230h191c11 0 11-39 0-39H64a268 268 0 01507 77h38A306 306 0 0038 158V19C38 9 0 9 0 19v191c0 19 19 20 19 20z"/>
                 </svg>
-            </div>
+            </section>
             <h4 class="gloss">Glossary</h4>
-            <div class="uniform">
-                <button class="lang en">English</button>
-                <button class="lang no">Norsk</button>
-                <button class="lang nl">Nederlands</button>
-                <button class="lang de">Deutsch</button>
+            <section>
+                <button class="en">English</button>
+                <button class="no">Norsk</button>
+                <button class="nl">Nederlands</button>
+                <button class="de">Deutsch</button>
                 <button class="custom">Customize</button>
-            </div>
-            <div class="stats uniform">
+            </section>
+            <section class="stats">
                 <div>
                     <h4 class="wpm">Words per minute</h4>
                     <div class="opm">0</div>
@@ -39,17 +39,17 @@
                     <h4 class="key">Keystrokes</h4>
                     <div class="trykk">0</div>
                 </div>
-            </div>
+            </section>
         </main>
         <aside class="close" hidden>
-            <section>
-                <textarea placeholder="Add words, separated by spaces, commas, semicolons, or lines... &#10;&#10;Put a hyphen (-) at the beginning to turn shuffle off. Note: This mode ignores commas and semicolons." spellcheck="false"></textarea>
+            <article>
+                <textarea placeholder="Add words, separated by spaces, commas, semicolons, or lines... &#10;&#10;Put a hyphen (-) at the beginning to practice a complete text." spellcheck="false"></textarea>
                 <div class="warn" hidden>The list must contain at least one word</div>
                 <div class="meny">
                     <button class="close cancel">Cancel</button>
                     <button class="apply">Apply</button>
                 </div>
-            </section>
+            </article>
         </aside>
         <script src="locale.js"></script>
         <script src="main.js"></script>
