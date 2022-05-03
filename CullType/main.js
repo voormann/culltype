@@ -4,15 +4,13 @@ let poeng = 0;
 let trykk = 0;
 let seconds = 59;
 let timer = false;
-let suspended = false;
 let randomize = true;
 let beginMsg = "Start by typing the first word";
 
 const uiEntry = document.querySelector('input');
-const uiTid = document.querySelector('span');
-const uiWords = document.querySelector('.words');
+const uiWords = document.querySelector('header');
 const uiWarn = document.querySelector('.warn');
-const uiBackdrop = document.querySelector('.close');
+const uiBackdrop = document.querySelector('aside');
 const uiList = document.querySelector('textarea');
 
 function mergeWords(cycle) {
@@ -24,9 +22,13 @@ function mergeWords(cycle) {
     return freight;
 }
 
-function restart(entry) {
-    clearInterval(timer);
+function amend() {
+    uiEntry.placeholder = beginMsg;
+    uiEntry.className = '';
+    uiEntry.focus();
+}
 
+function restart(entry = true) {
     if (randomize) {
         for (let i = liste.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -41,46 +43,33 @@ function restart(entry) {
     poeng = 0;
     trykk = 0;
     seconds = 59;
+
+    clearInterval(timer);
     timer = false;
 
-    uiTid.firstChild.nodeValue = "01:00";
     uiWords.firstChild.nodeValue = mergeWords(0);
+    uiEntry.nextSibling.nodeValue = "01:00";
     uiEntry.value = "";
-    uiEntry.focus();
 
-    if (entry) {
-        uiEntry.placeholder = beginMsg;
-        uiEntry.className = '';
-    }
-}
-
-function removeSuspension() {
-    suspended = false;
-
-    uiEntry.className = '';
-    uiEntry.value = "";
-    uiEntry.placeholder = beginMsg;
+    if (entry)
+        amend();
 }
 
 function tick() {
     if (--seconds < 0) {
-        poeng += ordet;
+        document.querySelector('.wpm').nextSibling.nodeValue = Math.round(poeng / 5);
+        document.querySelector('.acc').nextSibling.nodeValue = Math.round((poeng / trykk) * 100) + "%";
+        document.querySelector('.key').nextSibling.nodeValue = trykk;
+        document.querySelector('footer').style.opacity = '1';
+        uiEntry.blur();
 
-        document.querySelector('.opm').firstChild.nodeValue = Math.round(poeng / 5);
-        document.querySelector('.noy').firstChild.nodeValue = Math.round((poeng / trykk) * 100) + "%";
-        document.querySelector('.trykk').firstChild.nodeValue = trykk;
-        document.querySelector('.stats').style.opacity = '1';
-        uiEntry.className = 'suspended';
-
-        suspended = true;
-
-        window.setTimeout(removeSuspension, 1500);
+        setTimeout(amend, 1500);
         restart(false);
 
         return;
     }
 
-    uiTid.firstChild.nodeValue = "00:" + (seconds < 10 ? "0" + seconds : seconds);
+    uiEntry.nextSibling.nodeValue = "00:" + (seconds < 10 ? "0" + seconds : seconds);
 }
 
 function customize() {
@@ -88,24 +77,16 @@ function customize() {
     let indices = [];
 
     if (excerpt[0] === "-") {
-        indices = excerpt.substring(1).split(/[\s\n]+/);
+        indices = excerpt.substring(1).split(/\s+/).filter(Boolean);
         randomize = false;
     } else {
-        indices = excerpt.split(/[\s,;\n]+/);
+        indices = excerpt.split(/[\s,;]+/).filter(Boolean);
         randomize = true;
     }
 
-    if (indices[0] === "") {
+    if (indices.length === 0) {
         uiList.focus();
         uiWarn.hidden = false;
-
-        window.requestAnimationFrame(() => {
-            uiWarn.style.animation = 'none';
-
-            window.requestAnimationFrame(() => {
-                uiWarn.style.animation = 'taylor-swift 500ms linear forwards';
-            });
-        });
 
         return;
     }
@@ -115,34 +96,21 @@ function customize() {
 
     liste = [...indices];
 
-    restart(true);
-
-    uiBackdrop.hidden = true;
-    uiWarn.hidden = true;
-    uiList.removeAttribute('style');
+    restart();
+    fulfill('toggle');
 }
 
 function liten(char) {
     return char === char.toLowerCase();
 }
 
-uiEntry.addEventListener('keydown', (event) => {
-    if (suspended || event.repeat)
-        return;
-
-    if (!timer) {
-        timer = window.setInterval(tick, 1000);
-
-        uiTid.firstChild.nodeValue = "00:59";
-        uiEntry.placeholder = "";
-    }
-
+uiEntry.addEventListener('keyup', (event) => {
     trykk++;
 
     if (event.key === ' ') {
-        const index = liste[ordet];
+        const index = uiEntry.value;
 
-        if (index === uiEntry.value) {
+        if (liste[ordet] + " " === index) {
             if (liten(index[0])) {
                 poeng += index.length;
             } else {
@@ -153,21 +121,21 @@ uiEntry.addEventListener('keydown', (event) => {
         uiEntry.value = "";
         uiEntry.className = '';
         uiWords.firstChild.nodeValue = mergeWords(++ordet);
+    } else if (event.key === 'Enter') {
+        restart();
+    } else {
+        if (!timer) {
+            timer = setInterval(tick, 1000);
 
-        event.preventDefault();
-    } else if (event.key === 'Tab') {
-        restart(true);
+            uiEntry.nextSibling.nodeValue = "00:59";
+            uiEntry.placeholder = "";
+        }
 
-        event.preventDefault();
+        uiEntry.className = liste[ordet].startsWith(uiEntry.value) ? '' : 'bad';
     }
 });
 
-uiEntry.addEventListener('input', () => {
-    if (!suspended)
-        uiEntry.className = liste[ordet].startsWith(uiEntry.value) ? '' : 'bad';
-});
-
-function localize(taal, verander) {
+function localize(taal, verander = true) {
     if (verander) {
         uiList.placeholder = lang[taal].info;
 
@@ -180,40 +148,36 @@ function localize(taal, verander) {
 
     liste = lang[taal].words.split(" ");
 
-    restart(true);
+    restart();
 }
 
-document.body.addEventListener('click', (event) => {
-    const selected = event.target.classList[0];
+function fulfill(event) {
+    const selected = event.target ? event.target.classList[0] : event;
 
     if (!selected)
         return;
-    
+
     if (selected === 'reset') {
-        restart(true);
-    } else if (selected === 'custom') {
-        uiBackdrop.hidden = false;
-        uiList.focus();
-    } else if (selected === 'apply') {
-        customize();
-    } else if (selected === 'close') {
-        uiBackdrop.hidden = true;
+        restart();
+    } else if (selected === 'toggle') {
+        uiBackdrop.hidden = !uiBackdrop.hidden;
+        (uiBackdrop.hidden ? uiEntry : uiList).focus();
         uiWarn.hidden = true;
         uiList.removeAttribute('style');
-        uiEntry.focus();
+    } else if (selected === 'apply') {
+        customize();
     } else if (selected.length === 2) {
-        localize(selected, true);
+        localize(selected);
     }
-});
+}
+
+document.body.addEventListener('click', fulfill);
 
 (function () {
-    let presume = window.navigator.language.slice(0, 2);
-
-    if (['nb', 'nn'].includes(presume))
-        presume = 'no';
+    const presume = navigator.language.slice(0, 2).replace(/nb|nn/, 'no');
 
     if (['no', 'nl', 'de'].includes(presume)) {
-        localize(presume, true);
+        localize(presume);
     } else {
         localize('en', false);
     }

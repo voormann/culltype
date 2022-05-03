@@ -56,7 +56,7 @@ const lang = {
             key: "Tastenanschläge",
             warn: "Die Liste muss mindestens ein Wort enthalten",
             cancel: "Abbrechen",
-            apply: "Verwenden"
+            apply: "Übernehmen"
         }
     }
 };
